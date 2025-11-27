@@ -1,9 +1,12 @@
+import { BrowserRouter } from 'react-router';
+import { Router } from './Router';
+
 function App() {
   return (
-    <div className="App">
-      <h1>Welcome to Miniball Web!</h1>
-    </div>
-  )
+    <BrowserRouter>
+      <Router />
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;

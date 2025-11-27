@@ -7,6 +7,9 @@ import viteTsconfigPaths from 'vite-tsconfig-paths';
 export default defineConfig({
   plugins: [react(), viteTsconfigPaths(), svgr()],
   assetsInclude: ['**/*.jpg', '**/*.png', '**/*.webp', '**/*.svg', '**/*.ttf'],
+  server: {
+    port: 4000,
+  },
   optimizeDeps: {
     include: ['react', 'react-dom'],
   },
