@@ -6,17 +6,21 @@ export const AppContext = {
   forgot_password: 'Quên mật khẩu',
   register: 'Đăng ký',
   no_account: 'Chưa có tài khoản',
-};
-
-export const AppValidationMessages = {
+  have_account: 'Đã có tài khoản',
+  confirm_password: 'Xác nhận mật khẩu',
   invalid_email: 'Email không hợp lệ',
   required_email: 'Vui lòng nhập email',
   required_password: 'Vui lòng nhập mật khẩu',
-};
-
-export const AppErrorMessages = {
+  min_password: 'Mật khẩu phải ít nhất 6 ký tự',
+  invalid_confirm_password: 'Mật khẩu nhập lại không trùng khớp',
+  required_confirm_password: 'Vui lòng nhập lại mật khẩu',
   network_error: 'Lỗi mạng. Vui lòng kiểm tra kết nối của bạn.',
   unauthorized: 'Không có quyền truy cập. Vui lòng đăng nhập lại.',
   server_error: 'Lỗi máy chủ. Vui lòng thử lại sau.',
+  register_failed: 'Đăng ký thất bại. Vui lòng thử lại.',
   unknown_error: 'Đã có lỗi xảy ra. Vui lòng thử lại.',
+  loading: 'Đang tải...',
+  success: 'Thao tác thành công!',
+  login_success: 'Đăng nhập thành công!',
+  register_success: 'Đăng ký thành công!',
 };

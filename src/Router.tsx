@@ -2,7 +2,7 @@ import { FC, JSX } from 'react';
 import { Navigate, Route, Routes } from 'react-router';
 import { RoutePaths } from './constants';
 import { isAuthenticated } from './middlewares';
-import { LoginPage } from './modules/auth';
+import { LoginPage, RegisterPage } from './modules/auth';
 
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   if (!isAuthenticated()) {
@@ -29,6 +29,14 @@ export const Router: FC = () => {
         element={
           <PublicRoute>
             <LoginPage />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path={RoutePaths.REGISTER}
+        element={
+          <PublicRoute>
+            <RegisterPage />
           </PublicRoute>
         }
       />

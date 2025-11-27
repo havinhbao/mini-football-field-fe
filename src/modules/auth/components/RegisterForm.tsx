@@ -1,6 +1,6 @@
-import { AppContext, RoutePaths } from '@/constants';
+import { AppContext } from '@/constants';
 import { useToast } from '@/hooks';
-import { login } from '@/modules/auth/services';
+import { customerRegister } from '@/modules/auth/services';
 import {
   Box,
   Button,
@@ -12,35 +12,39 @@ import {
 } from '@mui/material';
 import { useFormik } from 'formik';
 import { useState } from 'react';
-import { useLocation } from 'react-router';
+import { useNavigate } from 'react-router';
 import * as Yup from 'yup';
 
-const LoginForm = () => {
+const RegisterForm = () => {
   const { showToast } = useToast();
-  const location = useLocation();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
   const formik = useFormik({
     initialValues: {
-      email: (location.state?.email as string) || '',
+      email: '',
       password: '',
+      confirmPassword: '',
     },
 
     validationSchema: Yup.object({
       email: Yup.string().email(AppContext.invalid_email).required(AppContext.required_email),
-      password: Yup.string().required(AppContext.required_password),
+      password: Yup.string().min(6, AppContext.min_password).required(AppContext.required_password),
+      confirmPassword: Yup.string()
+        .oneOf([Yup.ref('password')], AppContext.invalid_confirm_password)
+        .required(AppContext.required_confirm_password),
     }),
 
     onSubmit: async (values) => {
-      setLoading(true);
-
       try {
-        await login(values.email, values.password);
+        setLoading(true);
 
-        showToast(AppContext.login_success, 'success');
-        window.location.href = '/dashboard';
-      } catch (error: any) {
-        showToast(error.message || AppContext.unknown_error, 'error');
+        await customerRegister(values.email, values.password);
+
+        showToast(AppContext.register_success, 'success');
+        navigate('/login', { replace: true, state: { email: values.email } });
+      } catch (err: any) {
+        showToast(err?.response?.data?.message || AppContext.register_failed, 'error');
       } finally {
         setLoading(false);
       }
@@ -60,13 +64,12 @@ const LoginForm = () => {
     >
       <Paper elevation={3} sx={{ width: 380, p: 4, borderRadius: 2 }}>
         <Typography variant="h5" fontWeight={600} textAlign="center" mb={3}>
-          {AppContext.login}
+          {AppContext.register}
         </Typography>
 
         <form onSubmit={formik.handleSubmit}>
           {/* EMAIL */}
           <TextField
-            variant="outlined"
             fullWidth
             label={AppContext.email}
             margin="normal"
@@ -81,8 +84,8 @@ const LoginForm = () => {
           {/* PASSWORD */}
           <TextField
             fullWidth
-            label={AppContext.password}
             type="password"
+            label={AppContext.password}
             margin="normal"
             name="password"
             value={formik.values.password}
@@ -92,45 +95,38 @@ const LoginForm = () => {
             helperText={formik.touched.password && formik.errors.password}
           />
 
-          {/* API ERROR */}
-          {/* {apiError && (
-            <Typography color="error" mt={1} mb={1} fontSize={14}>
-              {apiError}
-            </Typography>
-          )} */}
+          {/* CONFIRM PASSWORD */}
+          <TextField
+            fullWidth
+            type="password"
+            label={AppContext.confirm_password}
+            margin="normal"
+            name="confirmPassword"
+            value={formik.values.confirmPassword}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)}
+            helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
+          />
 
-          {/* QUÊN MẬT KHẨU */}
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-              mt: 1,
-              mb: 2,
-            }}
-          >
-            <MuiLink href="/forgot-password" underline="hover" fontSize={14}>
-              {AppContext.forgot_password}?
-            </MuiLink>
-          </Box>
-
-          {/* BUTTON LOGIN */}
+          {/* BUTTON */}
           <Button
             fullWidth
             variant="contained"
             color="primary"
             type="submit"
-            sx={{ height: 45 }}
+            sx={{ mt: 2, height: 45 }}
             disabled={loading}
           >
-            {loading ? <CircularProgress size={26} color="inherit" /> : AppContext.login}
+            {loading ? <CircularProgress size={26} color="inherit" /> : AppContext.register}
           </Button>
         </form>
 
-        {/* ĐĂNG KÝ */}
+        {/* Đã có tài khoản? */}
         <Typography textAlign="center" mt={3} fontSize={14}>
-          {AppContext.no_account}?{' '}
-          <MuiLink href={RoutePaths.REGISTER} underline="hover">
-            {AppContext.register}
+          {AppContext.have_account}?{' '}
+          <MuiLink href="/login" underline="hover">
+            {AppContext.login}
           </MuiLink>
         </Typography>
       </Paper>
@@ -138,4 +134,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default RegisterForm;
