@@ -23,4 +23,11 @@ export const AppContext = {
   success: 'Thao tác thành công!',
   login_success: 'Đăng nhập thành công!',
   register_success: 'Đăng ký thành công!',
+
+  overview: 'Tổng quan',
+  field_management: 'Quản lý sân',
+  bookings: 'Lịch đặt sân',
+  customers: 'Khách hàng',
+  revenue: 'Doanh thu',
+  settings: 'Cài đặt',
 };

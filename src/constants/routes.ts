@@ -3,5 +3,11 @@ export const RoutePaths = {
   REGISTER: '/register',
   DASHBOARD: '/dashboard',
   PROFILE: '/profile',
-  SETTINGS: '/settings',
+  DASHBOARD_SUBPATHS: {
+    BOOKINGS: 'bookings',
+    FIELDS: 'fields',
+    CUSTOMERS: 'customers',
+    REVENUE: 'revenue',
+    SETTINGS: 'settings',
+  },
 };

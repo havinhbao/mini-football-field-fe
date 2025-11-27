@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from 'react-router';
 import { RoutePaths } from './constants';
 import { isAuthenticated } from './middlewares';
 import { LoginPage, RegisterPage } from './modules/auth';
+import { DashboardPage } from './modules/dashboard';
 
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   if (!isAuthenticated()) {
@@ -46,10 +47,20 @@ export const Router: FC = () => {
         path={RoutePaths.DASHBOARD}
         element={
           <ProtectedRoute>
-            <div>Dashboard Page (Protected)</div>
+            <DashboardPage />
           </ProtectedRoute>
         }
-      />
+      >
+        {/* Default page bên trong dashboard */}
+        <Route index element={<div>Dashboard Home</div>} />
+
+        {/* Sub routes */}
+        <Route path={RoutePaths.DASHBOARD_SUBPATHS.BOOKINGS} element={<div>Bookings Page</div>} />
+        <Route path={RoutePaths.DASHBOARD_SUBPATHS.FIELDS} element={<div>Field Management</div>} />
+        <Route path={RoutePaths.DASHBOARD_SUBPATHS.CUSTOMERS} element={<div>Customers Page</div>} />
+        <Route path={RoutePaths.DASHBOARD_SUBPATHS.REVENUE} element={<div>Revenue Page</div>} />
+        <Route path={RoutePaths.DASHBOARD_SUBPATHS.SETTINGS} element={<div>Settings Page</div>} />
+      </Route>
     </Routes>
   );
 };
