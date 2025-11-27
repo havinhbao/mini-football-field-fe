@@ -9,3 +9,10 @@ export const buildPath = (basePath: string, subPath: string): string => {
   }
   return `${basePath}/${subPath}`;
 };
+
+export const buildPriceString = (price: number): string => {
+  return price.toLocaleString('vi-VN', {
+    style: 'currency',
+    currency: 'VND',
+  });
+};

@@ -1,2 +1,4 @@
+import Header from './Header';
 import Toast from './Toast';
-export { Toast };
+
+export { Header, Toast };

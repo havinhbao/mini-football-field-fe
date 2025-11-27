@@ -7,6 +7,7 @@ export const RoutePaths = {
     BOOKINGS: 'bookings',
     FIELDS: 'fields',
     CUSTOMERS: 'customers',
+    STAFFS: 'staffs',
     REVENUE: 'revenue',
     SETTINGS: 'settings',
   },

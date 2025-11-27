@@ -39,8 +39,8 @@ const SideBar: FC<SideBarProps> = ({ open }) => {
     <Drawer
       variant="permanent"
       sx={{
-        mt: '56px',
-        height: 'calc(100vh - 56px)',
+        mt: '60px',
+        height: 'calc(100vh - 60px)',
         zIndex: (theme) => theme.zIndex.appBar - 1,
         width: open ? drawerWidth : miniWidth,
         flexShrink: 0,
@@ -48,8 +48,8 @@ const SideBar: FC<SideBarProps> = ({ open }) => {
         transition: 'width 0.25s ease',
 
         '& .MuiDrawer-paper': {
-          mt: '56px',
-          height: 'calc(100vh - 56px)',
+          mt: '60px',
+          height: 'calc(100vh - 60px)',
           width: open ? drawerWidth : miniWidth,
           boxSizing: 'border-box',
           borderRight: 'none',
@@ -81,6 +81,11 @@ const SideBar: FC<SideBarProps> = ({ open }) => {
             title: AppContext.customers,
             icon: <PeopleIcon />,
             path: buildPath(RoutePaths.DASHBOARD, RoutePaths.DASHBOARD_SUBPATHS.CUSTOMERS),
+          },
+          {
+            title: AppContext.staffs,
+            icon: <PeopleIcon />,
+            path: buildPath(RoutePaths.DASHBOARD, RoutePaths.DASHBOARD_SUBPATHS.STAFFS),
           },
           {
             title: AppContext.revenue,

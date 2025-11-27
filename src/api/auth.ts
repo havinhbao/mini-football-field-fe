@@ -26,3 +26,11 @@ export const createAdmin = async (email: string, password: string): Promise<void
     role: UserRole.ADMIN,
   });
 };
+
+export const createStaff = async (email: string, password: string): Promise<void> => {
+  await apiClient.post<ResponseObject<{ token: string }>>('/auth/register', {
+    email,
+    password,
+    role: UserRole.STAFF,
+  });
+};
