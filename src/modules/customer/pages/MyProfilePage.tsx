@@ -104,128 +104,135 @@ const MyProfilePage: FC = () => {
   });
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: '#f5f7fa' }}>
+    <Box sx={{ bgcolor: '#f5f7fa' }}>
       <CustomerNavBar />
       
-      <Container maxWidth="md" sx={{ py: 4 }}>
-        <Typography
-          variant="h3"
-          sx={{
-            fontWeight: 700,
-            mb: 1,
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-          }}
-        >
-          My Profile
-        </Typography>
-        <Typography variant="body1" sx={{ color: 'text.secondary', mb: 4 }}>
-          Manage your account settings
-        </Typography>
-
-        <Paper sx={{ borderRadius: 2, overflow: 'hidden' }}>
-          <Tabs
-            value={activeTab}
-            onChange={(_, newValue) => setActiveTab(newValue)}
-            sx={{ borderBottom: 1, borderColor: 'divider', bgcolor: 'grey.50' }}
+      <Box
+        sx={{
+          overflowY: 'auto',
+          maxHeight: 'calc(100vh - 64px)',
+        }}
+      >
+        <Container maxWidth="md" sx={{ py: 4 }}>
+          <Typography
+            variant="h3"
+            sx={{
+              fontWeight: 700,
+              mb: 1,
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
           >
-            <Tab icon={<Person />} iconPosition="start" label="Profile" />
-            <Tab icon={<Lock />} iconPosition="start" label="Security" />
-          </Tabs>
+            My Profile
+          </Typography>
+          <Typography variant="body1" sx={{ color: 'text.secondary', mb: 4 }}>
+            Manage your account settings
+          </Typography>
 
-          <Box sx={{ p: 4 }}>
-            {activeTab === 0 && (
-              <Box component="form" onSubmit={profileFormik.handleSubmit}>
-                <TextField
-                  fullWidth
-                  id="username"
-                  name="username"
-                  label="Full Name"
-                  value={profileFormik.values.username}
-                  onChange={profileFormik.handleChange}
-                  error={profileFormik.touched.username && Boolean(profileFormik.errors.username)}
-                  helperText={profileFormik.touched.username && profileFormik.errors.username}
-                  sx={{ mb: 3 }}
-                />
+          <Paper sx={{ borderRadius: 2, overflow: 'hidden' }}>
+            <Tabs
+              value={activeTab}
+              onChange={(_, newValue) => setActiveTab(newValue)}
+              sx={{ borderBottom: 1, borderColor: 'divider', bgcolor: 'grey.50' }}
+            >
+              <Tab icon={<Person />} iconPosition="start" label="Profile" />
+              <Tab icon={<Lock />} iconPosition="start" label="Security" />
+            </Tabs>
 
-                <TextField
-                  fullWidth
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  label="Phone Number"
-                  value={profileFormik.values.phoneNumber}
-                  onChange={profileFormik.handleChange}
-                  error={profileFormik.touched.phoneNumber && Boolean(profileFormik.errors.phoneNumber)}
-                  helperText={profileFormik.touched.phoneNumber && profileFormik.errors.phoneNumber}
-                  sx={{ mb: 3 }}
-                />
+            <Box sx={{ p: 4 }}>
+              {activeTab === 0 && (
+                <Box component="form" onSubmit={profileFormik.handleSubmit}>
+                  <TextField
+                    fullWidth
+                    id="username"
+                    name="username"
+                    label="Full Name"
+                    value={profileFormik.values.username}
+                    onChange={profileFormik.handleChange}
+                    error={profileFormik.touched.username && Boolean(profileFormik.errors.username)}
+                    helperText={profileFormik.touched.username && profileFormik.errors.username}
+                    sx={{ mb: 3 }}
+                  />
 
-                <Button
-                  variant="contained"
-                  type="submit"
-                  disabled={loading}
-                  startIcon={loading ? <CircularProgress size={20} /> : null}
-                >
-                  Save Changes
-                </Button>
-              </Box>
-            )}
+                  <TextField
+                    fullWidth
+                    id="phoneNumber"
+                    name="phoneNumber"
+                    label="Phone Number"
+                    value={profileFormik.values.phoneNumber}
+                    onChange={profileFormik.handleChange}
+                    error={profileFormik.touched.phoneNumber && Boolean(profileFormik.errors.phoneNumber)}
+                    helperText={profileFormik.touched.phoneNumber && profileFormik.errors.phoneNumber}
+                    sx={{ mb: 3 }}
+                  />
 
-            {activeTab === 1 && (
-              <Box component="form" onSubmit={passwordFormik.handleSubmit}>
-                <TextField
-                  fullWidth
-                  id="oldPassword"
-                  name="oldPassword"
-                  label="Current Password"
-                  type="password"
-                  value={passwordFormik.values.oldPassword}
-                  onChange={passwordFormik.handleChange}
-                  error={passwordFormik.touched.oldPassword && Boolean(passwordFormik.errors.oldPassword)}
-                  helperText={passwordFormik.touched.oldPassword && passwordFormik.errors.oldPassword}
-                  sx={{ mb: 3 }}
-                />
+                  <Button
+                    variant="contained"
+                    type="submit"
+                    disabled={loading}
+                    startIcon={loading ? <CircularProgress size={20} /> : null}
+                  >
+                    Save Changes
+                  </Button>
+                </Box>
+              )}
 
-                <TextField
-                  fullWidth
-                  id="newPassword"
-                  name="newPassword"
-                  label="New Password"
-                  type="password"
-                  value={passwordFormik.values.newPassword}
-                  onChange={passwordFormik.handleChange}
-                  error={passwordFormik.touched.newPassword && Boolean(passwordFormik.errors.newPassword)}
-                  helperText={passwordFormik.touched.newPassword && passwordFormik.errors.newPassword}
-                  sx={{ mb: 3 }}
-                />
+              {activeTab === 1 && (
+                <Box component="form" onSubmit={passwordFormik.handleSubmit}>
+                  <TextField
+                    fullWidth
+                    id="oldPassword"
+                    name="oldPassword"
+                    label="Current Password"
+                    type="password"
+                    value={passwordFormik.values.oldPassword}
+                    onChange={passwordFormik.handleChange}
+                    error={passwordFormik.touched.oldPassword && Boolean(passwordFormik.errors.oldPassword)}
+                    helperText={passwordFormik.touched.oldPassword && passwordFormik.errors.oldPassword}
+                    sx={{ mb: 3 }}
+                  />
 
-                <TextField
-                  fullWidth
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  label="Confirm New Password"
-                  type="password"
-                  value={passwordFormik.values.confirmPassword}
-                  onChange={passwordFormik.handleChange}
-                  error={passwordFormik.touched.confirmPassword && Boolean(passwordFormik.errors.confirmPassword)}
-                  helperText={passwordFormik.touched.confirmPassword && passwordFormik.errors.confirmPassword}
-                  sx={{ mb: 3 }}
-                />
+                  <TextField
+                    fullWidth
+                    id="newPassword"
+                    name="newPassword"
+                    label="New Password"
+                    type="password"
+                    value={passwordFormik.values.newPassword}
+                    onChange={passwordFormik.handleChange}
+                    error={passwordFormik.touched.newPassword && Boolean(passwordFormik.errors.newPassword)}
+                    helperText={passwordFormik.touched.newPassword && passwordFormik.errors.newPassword}
+                    sx={{ mb: 3 }}
+                  />
 
-                <Button
-                  variant="contained"
-                  type="submit"
-                  disabled={loading}
-                  startIcon={loading ? <CircularProgress size={20} /> : null}
-                >
-                  Change Password
-                </Button>
-              </Box>
-            )}
-          </Box>
-        </Paper>
-      </Container>
+                  <TextField
+                    fullWidth
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    label="Confirm New Password"
+                    type="password"
+                    value={passwordFormik.values.confirmPassword}
+                    onChange={passwordFormik.handleChange}
+                    error={passwordFormik.touched.confirmPassword && Boolean(passwordFormik.errors.confirmPassword)}
+                    helperText={passwordFormik.touched.confirmPassword && passwordFormik.errors.confirmPassword}
+                    sx={{ mb: 3 }}
+                  />
+
+                  <Button
+                    variant="contained"
+                    type="submit"
+                    disabled={loading}
+                    startIcon={loading ? <CircularProgress size={20} /> : null}
+                  >
+                    Change Password
+                  </Button>
+                </Box>
+              )}
+            </Box>
+          </Paper>
+        </Container>
+      </Box>
     </Box>
   );
 };

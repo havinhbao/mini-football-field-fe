@@ -163,9 +163,11 @@ const FieldPage: FC = () => {
         sx={{
           display: 'flex',
           width: '100%',
+          height: '100vh',
           flexDirection: 'column',
           py: 4,
           px: 8,
+          pb: 12,
           flexGrow: 1,
           overflowY: 'auto',
           '&::-webkit-scrollbar': {

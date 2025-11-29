@@ -4,12 +4,27 @@ import { RoutePaths, UserRole } from './constants';
 import { getUserRole, isAuthenticated } from './middlewares';
 import { LoginPage, RegisterPage } from './modules/auth';
 import { BookingManagementPage } from './modules/booking/pages';
-import { BookFieldPage, MyBookingsPage, MyProfilePage } from './modules/customer';
+import { BookFieldPage, MyBookingsPage, MyProfilePage, VNPayPaymentPage } from './modules/customer';
 import { DashboardPage, SettingsPage } from './modules/dashboard';
 import { FieldManagementPage, FieldPage } from './modules/field';
 import { OverviewPage } from './modules/overview';
 import { RevenueManagementPage } from './modules/revenue';
 import { CustomerManagementPage, StaffManagementPage } from './modules/user';
+
+// Root Redirect - Redirects based on authentication and role
+const RootRedirect = () => {
+  if (!isAuthenticated()) {
+    return <Navigate to={RoutePaths.LOGIN} replace />;
+  }
+
+  const role = getUserRole();
+  if (role === UserRole.ADMIN || role === UserRole.STAFF) {
+    return <Navigate to={RoutePaths.DASHBOARD} replace />;
+  }
+
+  // Customer role or default
+  return <FieldPage />;
+};
 
 // Customer Route Guard - Only for CUSTOMER role
 const CustomerRoute = ({ children }: { children: JSX.Element }) => {
@@ -55,8 +70,10 @@ const PublicRoute = ({ children }: { children: JSX.Element }) => {
 export const Router: FC = () => {
   return (
     <Routes>
+      {/* Root Route - Role-based redirect */}
+      <Route path="/" element={<RootRedirect />} />
+
       {/* Public Routes */}
-      <Route path="/" element={<FieldPage />} />
       <Route
         path={RoutePaths.LOGIN}
         element={
@@ -96,6 +113,14 @@ export const Router: FC = () => {
         element={
           <CustomerRoute>
             <MyProfilePage />
+          </CustomerRoute>
+        }
+      />
+      <Route
+        path={RoutePaths.VNPAY_PAYMENT}
+        element={
+          <CustomerRoute>
+            <VNPayPaymentPage />
           </CustomerRoute>
         }
       />

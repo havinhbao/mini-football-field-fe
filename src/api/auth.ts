@@ -1,4 +1,4 @@
-import { UserRole } from '@/constants';
+import { StorageKey, UserRole } from '@/constants';
 import { apiClient } from '@/libs';
 import { ResponseObject } from '@/types';
 
@@ -45,6 +45,5 @@ export const changePassword = async (oldPassword: string, newPassword: string): 
 export const logout = async (): Promise<void> => {
   // If backend has logout endpoint
   // await apiClient.post('/auth/logout');
-  localStorage.removeItem('token');
-  localStorage.removeItem('user');
+  localStorage.removeItem(StorageKey.ACCESS_TOKEN);
 };
