@@ -34,3 +34,17 @@ export const createStaff = async (email: string, password: string): Promise<void
     role: UserRole.STAFF,
   });
 };
+
+export const changePassword = async (oldPassword: string, newPassword: string): Promise<void> => {
+  await apiClient.post<ResponseObject<void>>('/auth/change-password', {
+    oldPassword,
+    newPassword,
+  });
+};
+
+export const logout = async (): Promise<void> => {
+  // If backend has logout endpoint
+  // await apiClient.post('/auth/logout');
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+};

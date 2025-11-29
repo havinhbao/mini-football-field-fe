@@ -1,8 +1,11 @@
-import { AppContext, FieldSize, FieldStatus, FieldType } from '@/constants';
+import { AppContext, FieldSize, FieldStatus, FieldType, RoutePaths } from '@/constants';
+import { isAuthenticated } from '@/middlewares';
 import { getFields } from '@/modules/field/services';
 import { buildPriceString } from '@/utils';
-import { Box, Card, CardContent, CardMedia, Chip, Grid, Typography } from '@mui/material';
+import { EventAvailable } from '@mui/icons-material';
+import { Box, Button, Card, CardContent, CardMedia, Chip, Grid, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
 
 type Field = {
   id: string;
@@ -16,6 +19,7 @@ type Field = {
 
 export default function FieldGrid() {
   const [fields, setFields] = useState<Field[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -24,6 +28,14 @@ export default function FieldGrid() {
     };
     fetchData();
   }, []);
+
+  const handleBookNow = (fieldId: string) => {
+    if (!isAuthenticated()) {
+      navigate(RoutePaths.LOGIN);
+      return;
+    }
+    navigate(`${RoutePaths.BOOK_FIELD}?fieldId=${fieldId}`);
+  };
 
   return (
     <Grid container spacing={3}>
@@ -35,7 +47,9 @@ export default function FieldGrid() {
               overflow: 'hidden',
               boxShadow: '0 4px 10px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.05)',
               transition: '0.3s',
-              cursor: 'pointer',
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
               '&:hover': {
                 transform: 'translateY(-6px)',
                 boxShadow: '0 8px 28px rgba(0,0,0,0.12)',
@@ -56,7 +70,7 @@ export default function FieldGrid() {
               />
             </Box>
 
-            <CardContent>
+            <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
               <Typography variant="h6" fontWeight={700}>
                 {f.name}
               </Typography>
@@ -69,6 +83,7 @@ export default function FieldGrid() {
                   mt: 1,
                   fontWeight: 600,
                   borderRadius: 1,
+                  width: 'fit-content',
                 }}
               />
 
@@ -81,6 +96,7 @@ export default function FieldGrid() {
                 size="small"
                 sx={{
                   mt: 1.5,
+                  width: 'fit-content',
                   bgcolor:
                     f.status === FieldStatus.AVAILABLE
                       ? 'rgba(0, 200, 83, 0.15)'
@@ -89,6 +105,22 @@ export default function FieldGrid() {
                   fontWeight: 600,
                 }}
               />
+
+              <Button
+                variant="contained"
+                fullWidth
+                startIcon={<EventAvailable />}
+                onClick={() => handleBookNow(f.id)}
+                disabled={f.status !== FieldStatus.AVAILABLE}
+                sx={{
+                  mt: 2,
+                  borderRadius: 2,
+                  textTransform: 'none',
+                  fontWeight: 600,
+                }}
+              >
+                Book Now
+              </Button>
             </CardContent>
           </Card>
         </Grid>
