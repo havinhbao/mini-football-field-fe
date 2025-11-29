@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from 'react-router';
 import { RoutePaths } from './constants';
 import { isAuthenticated } from './middlewares';
 import { LoginPage, RegisterPage } from './modules/auth';
+import { BookingManagementPage } from './modules/booking/pages';
 import { DashboardPage } from './modules/dashboard';
 import { FieldManagementPage, FieldPage } from './modules/field';
 import { OverviewPage } from './modules/overview';
@@ -61,7 +62,7 @@ export const Router: FC = () => {
         <Route index element={<OverviewPage />} />
 
         {/* Sub routes */}
-        <Route path={RoutePaths.DASHBOARD_SUBPATHS.BOOKINGS} element={<div>Bookings Page</div>} />
+        <Route path={RoutePaths.DASHBOARD_SUBPATHS.BOOKINGS} element={<BookingManagementPage />} />
         <Route path={RoutePaths.DASHBOARD_SUBPATHS.FIELDS} element={<FieldManagementPage />} />
         <Route
           path={RoutePaths.DASHBOARD_SUBPATHS.CUSTOMERS}

@@ -1,3 +1,4 @@
+import { StorageKey } from '@/constants';
 import Axios from 'axios';
 
 export const apiClient = Axios.create({
@@ -6,10 +7,10 @@ export const apiClient = Axios.create({
 
 apiClient.interceptors.request.use(
   async (config) => {
-    const token = localStorage.getItem('accessToken');
+    const token = localStorage.getItem(StorageKey.ACCESS_TOKEN);
 
-    if (token) {
-      config.headers.AccessToken = `${token}`;
+    if (token && config.headers) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
 
     return config;

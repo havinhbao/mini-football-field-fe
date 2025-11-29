@@ -2,7 +2,7 @@ import { FieldSize, FieldStatus, FieldType } from '@/constants';
 import { apiClient } from '@/libs';
 import { ResponseObject } from '@/types';
 
-type FieldResponse = {
+export type Field = {
   id: string;
   name: string;
   type: FieldType;
@@ -13,7 +13,7 @@ type FieldResponse = {
 };
 
 export const fetchFields = async () => {
-  const response = await apiClient.get<ResponseObject<FieldResponse[]>>('/fields');
+  const response = await apiClient.get<ResponseObject<Field[]>>('/fields');
 
   return response.data.payload;
 };
