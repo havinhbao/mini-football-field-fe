@@ -1,4 +1,3 @@
-import { changePassword } from '@/api/auth';
 import { userApi } from '@/api/user';
 import { StorageKey } from '@/constants';
 import { useToast } from '@/hooks';
@@ -92,8 +91,8 @@ const MyProfilePage: FC = () => {
     onSubmit: async (values, { resetForm }) => {
       setLoading(true);
       try {
-        await changePassword(values.oldPassword, values.newPassword);
-        showToast('Password changed successfully', 'success');
+        // await changePassword(values.oldPassword, values.newPassword);
+        showToast('Feature not available', 'error');
         resetForm();
       } catch (error) {
         showToast('Failed to change password', 'error');

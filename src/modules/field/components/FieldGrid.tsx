@@ -1,4 +1,4 @@
-import { AppContext, FieldSize, FieldStatus, FieldType, RoutePaths } from '@/constants';
+import { AppContext, FieldStatus, RoutePaths } from '@/constants';
 import { isAuthenticated } from '@/middlewares';
 import { getFields } from '@/modules/field/services';
 import { buildPriceString } from '@/utils';
@@ -6,16 +6,7 @@ import { EventAvailable } from '@mui/icons-material';
 import { Box, Button, Card, CardContent, CardMedia, Chip, Grid, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-
-type Field = {
-  id: string;
-  name: string;
-  type: FieldType;
-  size: FieldSize;
-  status: FieldStatus;
-  pricePerHour: number;
-  images?: string[];
-};
+import { Field } from '@/api/field';
 
 export default function FieldGrid() {
   const [fields, setFields] = useState<Field[]>([]);
@@ -105,6 +96,21 @@ export default function FieldGrid() {
                   fontWeight: 600,
                 }}
               />
+
+              {/* Booked status indicator - shown when field has bookings for current time */}
+              {f.hasCurrentBooking && (
+                <Chip
+                  label="Booked"
+                  size="small"
+                  sx={{
+                    mt: 1,
+                    width: 'fit-content',
+                    bgcolor: 'rgba(211, 47, 47, 0.15)',
+                    color: 'error.main',
+                    fontWeight: 600,
+                  }}
+                />
+              )}
 
               <Button
                 variant="contained"

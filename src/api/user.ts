@@ -1,20 +1,8 @@
 import { UserRole } from '@/constants';
 import { apiClient } from '@/libs';
-import { ResponseObject } from '@/types';
+import { ResponseObject, UpdateUserDto, UserDto } from '@/types';
 
-export type UserDto = {
-  id: string;
-  email: string;
-  username: string;
-  role: UserRole;
-  phoneNumber?: string;
-  createdAt: Date;
-  updatedAt: Date;
-};
-
-export type UpdateUserDto = Partial<Omit<UserDto, 'id' | 'createdAt' | 'updatedAt'>> & {
-  id: string;
-};
+export type { UserDto, UpdateUserDto };
 
 export const userApi = {
   updateUser: async (payload: UpdateUserDto) => {
@@ -22,8 +10,10 @@ export const userApi = {
     return response.data.payload;
   },
 
-  getAllUsers: async () => {
-    const response = await apiClient.get<ResponseObject<UserDto[]>>('/users');
+  getAllUsers: async (filters?: { role?: UserRole; search?: string }) => {
+    const response = await apiClient.get<ResponseObject<UserDto[]>>('/users', {
+      params: filters,
+    });
     return response.data.payload;
   },
 

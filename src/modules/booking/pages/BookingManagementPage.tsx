@@ -84,6 +84,11 @@ const BookingManagementPage: FC = () => {
     fetchFields();
   }, []);
 
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [bookingToConfirm, setBookingToConfirm] = useState<string | null>(null);
+  const [confirmPaymentMethod, setConfirmPaymentMethod] = useState<'cash' | 'banking' | 'momo'>('cash');
+  const [confirmDepositAmount, setConfirmDepositAmount] = useState<number>(0);
+
   const showSnackbar = (message: string, severity: 'success' | 'error') => {
     setSnackbar({ open: true, message, severity });
   };
@@ -141,11 +146,41 @@ const BookingManagementPage: FC = () => {
     }
   };
 
-  const handleConfirm = async (id: string) => {
+  const handleConfirmClick = (id: string) => {
+    setBookingToConfirm(id);
+    // Reset defaults
+    setConfirmPaymentMethod('cash');
+    setConfirmDepositAmount(0);
+    
+    // Find booking to set default deposit amount if needed
+    const booking = bookings.find(b => b.id === id);
+    if (booking) {
+      setConfirmDepositAmount(booking.totalPrice);
+    }
+    
+    setConfirmDialogOpen(true);
+  };
+
+  const handleConfirmSubmit = async () => {
+    if (!bookingToConfirm) return;
     try {
-      await confirmBooking(id);
+      // If isDeposit is false (meaning full payment or no payment), we send undefined for depositAmount if it's not a payment scenario
+      // But here we want to support payment during confirmation.
+      // If user wants to just confirm without payment, they should probably have a way to do that.
+      // Let's assume if they open this dialog, they might want to pay.
+      // Or we can add a "Confirm without Payment" button?
+      // The requirement says "if payment is cash, and admin confirm so that it can align with changes from backend".
+      // So we should send payment details if provided.
+      
+      await confirmBooking(bookingToConfirm, {
+        paymentMethod: confirmPaymentMethod,
+        depositAmount: confirmDepositAmount
+      });
+      
       showSnackbar('Booking confirmed successfully', 'success');
       fetchBookings();
+      setConfirmDialogOpen(false);
+      setBookingToConfirm(null);
     } catch (error) {
       showSnackbar('Failed to confirm booking', 'error');
     }
@@ -274,7 +309,7 @@ const BookingManagementPage: FC = () => {
                 onEdit={(booking) => handleEdit(booking)}
                 onDelete={handleDelete}
                 onCancel={handleCancelClick}
-                onConfirm={handleConfirm}
+                onConfirm={handleConfirmClick}
                 onPay={handlePayClick}
               />
             )}
@@ -316,6 +351,72 @@ const BookingManagementPage: FC = () => {
             <Button onClick={() => setCancelDialogOpen(false)}>Cancel</Button>
             <Button onClick={handleCancelConfirm} variant="contained" color="warning">
               Confirm Cancellation
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Confirmation Dialog */}
+        <Dialog
+          open={confirmDialogOpen}
+          onClose={() => setConfirmDialogOpen(false)}
+          maxWidth="sm"
+          fullWidth
+        >
+          <DialogTitle>Confirm Booking</DialogTitle>
+          <DialogContent>
+            <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
+              You can optionally record a payment or deposit when confirming this booking.
+            </Typography>
+            
+            <TextField
+              select
+              fullWidth
+              label="Payment Method"
+              value={confirmPaymentMethod}
+              onChange={(e) => setConfirmPaymentMethod(e.target.value as 'cash' | 'banking' | 'momo')}
+              sx={{ mb: 2 }}
+              slotProps={{
+                select: {
+                  native: true,
+                },
+              }}
+            >
+              <option value="cash">Cash</option>
+              <option value="banking">Banking</option>
+              <option value="momo">MoMo</option>
+            </TextField>
+
+            <TextField
+              fullWidth
+              label="Amount Received"
+              type="number"
+              value={confirmDepositAmount}
+              onChange={(e) => setConfirmDepositAmount(Number(e.target.value))}
+              helperText="Enter the amount received (full price or deposit)"
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setConfirmDialogOpen(false)}>Cancel</Button>
+            <Button 
+              onClick={async () => {
+                if (!bookingToConfirm) return;
+                try {
+                  // Confirm without payment
+                  await confirmBooking(bookingToConfirm);
+                  showSnackbar('Booking confirmed successfully', 'success');
+                  fetchBookings();
+                  setConfirmDialogOpen(false);
+                  setBookingToConfirm(null);
+                } catch (error) {
+                  showSnackbar('Failed to confirm booking', 'error');
+                }
+              }}
+              color="primary"
+            >
+              Confirm Only
+            </Button>
+            <Button onClick={handleConfirmSubmit} variant="contained" color="success">
+              Confirm & Pay
             </Button>
           </DialogActions>
         </Dialog>

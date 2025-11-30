@@ -1,4 +1,3 @@
-import { changePassword } from '@/api/auth';
 import { useToast } from '@/hooks';
 import { Box, Button, CircularProgress, TextField, Typography } from '@mui/material';
 import { useFormik } from 'formik';
@@ -27,8 +26,8 @@ export const SecuritySettings: FC = () => {
     onSubmit: async (values, { resetForm }) => {
       setLoading(true);
       try {
-        await changePassword(values.oldPassword, values.newPassword);
-        showToast('Password changed successfully', 'success');
+        // await changePassword(values.oldPassword, values.newPassword);
+        showToast('Feature not available', 'error');
         resetForm();
       } catch (error) {
         showToast('Failed to change password', 'error');

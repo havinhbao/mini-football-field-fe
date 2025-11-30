@@ -1,3 +1,11 @@
+import { apiClient } from '@/libs';
+import { ResponseObject } from '@/types';
+import {
+  DailyRevenueDto,
+  RevenueStatsDto,
+  WeeklyRevenueDto,
+  YearlyRevenueDto,
+} from '@/types/api';
 
 export type RevenuePeriod = 'week' | 'month' | 'year';
 
@@ -11,67 +19,101 @@ export type RevenueStats = {
   breakdown: RevenueData[];
 };
 
-// Mock data generator
-const generateMockData = (period: RevenuePeriod, date: Date): RevenueStats => {
-  const breakdown: RevenueData[] = [];
-  let totalRevenue = 0;
-
-  if (period === 'week') {
-    // Generate daily data for the week
-    const startOfWeek = new Date(date);
-    const day = startOfWeek.getDay();
-    const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is sunday
-    startOfWeek.setDate(diff);
-
-    for (let i = 0; i < 7; i++) {
-      const current = new Date(startOfWeek);
-      current.setDate(startOfWeek.getDate() + i);
-      const amount = Math.floor(Math.random() * 1000000) + 500000;
-      totalRevenue += amount;
-      breakdown.push({
-        date: current.toISOString().split('T')[0],
-        amount,
-      });
-    }
-  } else if (period === 'month') {
-    // Generate daily data for the month
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-    for (let i = 1; i <= daysInMonth; i++) {
-      const current = new Date(year, month, i);
-      const amount = Math.floor(Math.random() * 1000000) + 500000;
-      totalRevenue += amount;
-      breakdown.push({
-        date: current.toISOString().split('T')[0],
-        amount,
-      });
-    }
-  } else if (period === 'year') {
-    // Generate monthly data for the year
-    const year = date.getFullYear();
-    for (let i = 0; i < 12; i++) {
-      const amount = Math.floor(Math.random() * 10000000) + 5000000;
-      totalRevenue += amount;
-      breakdown.push({
-        date: `${year}-${String(i + 1).padStart(2, '0')}`,
-        amount,
-      });
-    }
-  }
-
-  return { totalRevenue, breakdown };
+// Get daily revenue
+export const getDailyRevenue = async (startDate: string, endDate: string) => {
+  const response = await apiClient.get<ResponseObject<DailyRevenueDto[]>>('/revenues/daily', {
+    params: { startDate, endDate },
+  });
+  return response.data.payload;
 };
 
+// Get weekly revenue
+export const getWeeklyRevenue = async (year: number, month: number) => {
+  const response = await apiClient.get<ResponseObject<WeeklyRevenueDto[]>>('/revenues/weekly', {
+    params: { year, month },
+  });
+  return response.data.payload;
+};
+
+// Get yearly revenue
+export const getYearlyRevenue = async (year: number) => {
+  const response = await apiClient.get<ResponseObject<YearlyRevenueDto[]>>('/revenues/yearly', {
+    params: { year },
+  });
+  return response.data.payload;
+};
+
+// Get revenue statistics
+export const getRevenueStatsRaw = async (startDate?: string, endDate?: string) => {
+  const response = await apiClient.get<ResponseObject<RevenueStatsDto>>('/revenues/stats', {
+    params: { startDate, endDate },
+  });
+  return response.data.payload;
+};
+
+// Unified function for UI - maps period to appropriate API call
 export const getRevenueStats = async (
   period: RevenuePeriod,
   date: Date
 ): Promise<RevenueStats> => {
-  // Simulate API call
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(generateMockData(period, date));
-    }, 500);
-  });
+  try {
+    if (period === 'week') {
+      // Get week's start and end dates
+      const startOfWeek = new Date(date);
+      const day = startOfWeek.getDay();
+      const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1);
+      startOfWeek.setDate(diff);
+      
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 6);
+
+      const startDate = startOfWeek.toISOString().split('T')[0];
+      const endDate = endOfWeek.toISOString().split('T')[0];
+
+      const data = await getDailyRevenue(startDate, endDate);
+      
+      const breakdown: RevenueData[] = data.map((item) => ({
+        date: new Date(item.date).toISOString().split('T')[0],
+        amount: item.revenue,
+      }));
+
+      const totalRevenue = data.reduce((sum, item) => sum + item.revenue, 0);
+
+      return { totalRevenue, breakdown };
+    } else if (period === 'month') {
+      const year = date.getFullYear();
+      const month = date.getMonth();
+      
+      const startDate = new Date(year, month, 1).toISOString().split('T')[0];
+      const endDate = new Date(year, month + 1, 0).toISOString().split('T')[0];
+
+      const data = await getDailyRevenue(startDate, endDate);
+      
+      const breakdown: RevenueData[] = data.map((item) => ({
+        date: new Date(item.date).toISOString().split('T')[0],
+        amount: item.revenue,
+      }));
+
+      const totalRevenue = data.reduce((sum, item) => sum + item.revenue, 0);
+
+      return { totalRevenue, breakdown };
+    } else if (period === 'year') {
+      const year = date.getFullYear();
+      const data = await getYearlyRevenue(year);
+      
+      const breakdown: RevenueData[] = data.map((item) => ({
+        date: `${year}-${String(item.month).padStart(2, '0')}`,
+        amount: item.revenue,
+      }));
+
+      const totalRevenue = data.reduce((sum, item) => sum + item.revenue, 0);
+
+      return { totalRevenue, breakdown };
+    }
+
+    return { totalRevenue: 0, breakdown: [] };
+  } catch (error) {
+    console.error('Failed to fetch revenue stats:', error);
+    throw error;
+  }
 };

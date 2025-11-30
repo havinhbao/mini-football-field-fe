@@ -1,3 +1,4 @@
+import { createCustomer } from '@/api/auth';
 import { userApi } from '@/api/user';
 import { UserRole } from '@/constants';
 import { Add } from '@mui/icons-material';
@@ -28,12 +29,8 @@ const CustomerManagementPage: FC = () => {
   const fetchCustomers = async () => {
     setLoading(true);
     try {
-      const allUsers = await userApi.getAllUsers();
-      // Filter for customers only
-      const customers = (allUsers as unknown as User[]).filter(
-        (user) => user.role === UserRole.CUSTOMER
-      );
-      setUsers(customers);
+      const allUsers = await userApi.getAllUsers({ role: UserRole.CUSTOMER });
+      setUsers(allUsers as unknown as User[]);
     } catch (error) {
       showSnackbar('Failed to fetch customers', 'error');
     } finally {
@@ -55,9 +52,8 @@ const CustomerManagementPage: FC = () => {
         await userApi.updateUser({ ...values, id: selectedUser.id });
         showSnackbar('Customer updated successfully', 'success');
       } else {
-        // Note: Create user API not implemented in frontend yet, using placeholder
-        // await userApi.createUser(values);
-        showSnackbar('Create functionality coming soon', 'warning');
+        await createCustomer(values.email, values.password);
+        showSnackbar('Customer created successfully', 'success');
       }
       fetchCustomers();
       setDialogOpen(false);

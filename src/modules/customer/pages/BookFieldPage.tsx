@@ -1,4 +1,5 @@
 import { createBooking, getDailySchedule } from '@/api/booking';
+import { FieldSize, FieldStatus } from '@/constants';
 import { RoutePaths } from '@/constants/routes';
 import { useToast } from '@/hooks';
 import { getFields } from '@/modules/field/services';
@@ -7,6 +8,7 @@ import {
   Button,
   Card,
   CardContent,
+  Chip,
   CircularProgress,
   Container,
   FormControl,
@@ -26,6 +28,11 @@ const BookFieldPage: FC = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
 
+  // Filter states
+  const [nameFilter, setNameFilter] = useState('');
+  const [sizeFilter, setSizeFilter] = useState<FieldSize | ''>('');
+  const [statusFilter, setStatusFilter] = useState<FieldStatus | ''>('');
+
   const [fields, setFields] = useState<any[]>([]);
   const [selectedFieldId, setSelectedFieldId] = useState(searchParams.get('fieldId') || '');
   const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
@@ -37,7 +44,7 @@ const BookFieldPage: FC = () => {
 
   useEffect(() => {
     fetchFields();
-  }, []);
+  }, [nameFilter, sizeFilter, statusFilter]);
 
   useEffect(() => {
     if (selectedFieldId && selectedDate) {
@@ -47,7 +54,12 @@ const BookFieldPage: FC = () => {
 
   const fetchFields = async () => {
     try {
-      const response = await getFields();
+      const filters: any = {};
+      if (nameFilter) filters.name = nameFilter;
+      if (sizeFilter) filters.size = sizeFilter;
+      if (statusFilter) filters.status = statusFilter;
+
+      const response = await getFields(filters);
       setFields(response);
     } catch (error) {
       showToast('Failed to load fields', 'error');
@@ -155,6 +167,72 @@ const BookFieldPage: FC = () => {
 
           <Card sx={{ borderRadius: 2, boxShadow: 2, mb: 3 }}>
             <CardContent sx={{ p: 4 }}>
+              {/* Search Filters */}
+              <Box sx={{ mb: 3, p: 2, bgcolor: 'grey.50', borderRadius: 2 }}>
+                <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600 }}>
+                  Search Filters
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+                  <TextField
+                    size="small"
+                    label="Field Name"
+                    value={nameFilter}
+                    onChange={(e) => setNameFilter(e.target.value)}
+                    placeholder="Search by name..."
+                    sx={{ flex: '1 1 200px' }}
+                  />
+                  <FormControl size="small" sx={{ flex: '1 1 150px' }}>
+                    <InputLabel>Size</InputLabel>
+                    <Select
+                      value={sizeFilter}
+                      onChange={(e) => setSizeFilter(e.target.value as FieldSize | '')}
+                      label="Size"
+                    >
+                      <MenuItem value="">All Sizes</MenuItem>
+                      <MenuItem value={FieldSize.FIVE_SIDE}>Small (5v5)</MenuItem>
+                      <MenuItem value={FieldSize.SEVEN_SIDE}>Medium (7v7)</MenuItem>
+                    </Select>
+                  </FormControl>
+                  <FormControl size="small" sx={{ flex: '1 1 150px' }}>
+                    <InputLabel>Status</InputLabel>
+                    <Select
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value as FieldStatus | '')}
+                      label="Status"
+                    >
+                      <MenuItem value="">All Status</MenuItem>
+                      <MenuItem value={FieldStatus.AVAILABLE}>Available</MenuItem>
+                      <MenuItem value={FieldStatus.MAINTENANCE}>Maintenance</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Box>
+                {(nameFilter || sizeFilter || statusFilter) && (
+                  <Box sx={{ mt: 2, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                    {nameFilter && (
+                      <Chip
+                        size="small"
+                        label={`Name: ${nameFilter}`}
+                        onDelete={() => setNameFilter('')}
+                      />
+                    )}
+                    {sizeFilter && (
+                      <Chip
+                        size="small"
+                        label={`Size: ${sizeFilter}`}
+                        onDelete={() => setSizeFilter('')}
+                      />
+                    )}
+                    {statusFilter && (
+                      <Chip
+                        size="small"
+                        label={`Status: ${statusFilter}`}
+                        onDelete={() => setStatusFilter('')}
+                      />
+                    )}
+                  </Box>
+                )}
+              </Box>
+
               <FormControl fullWidth sx={{ mb: 3 }}>
                 <InputLabel>Select Field</InputLabel>
                 <Select

@@ -1,3 +1,4 @@
+import { createStaff } from '@/api/auth';
 import { userApi } from '@/api/user';
 import { UserRole } from '@/constants';
 import { Add } from '@mui/icons-material';
@@ -28,12 +29,8 @@ const StaffManagementPage: FC = () => {
   const fetchStaff = async () => {
     setLoading(true);
     try {
-      const allUsers = await userApi.getAllUsers();
-      // Filter for staff and admins
-      const staff = (allUsers as unknown as User[]).filter(
-        (user) => user.role === UserRole.STAFF || user.role === UserRole.ADMIN
-      );
-      setUsers(staff);
+      const allUsers = await userApi.getAllUsers({ role: UserRole.STAFF });
+      setUsers(allUsers as unknown as User[]);
     } catch (error) {
       showSnackbar('Failed to fetch staff', 'error');
     } finally {
@@ -55,9 +52,8 @@ const StaffManagementPage: FC = () => {
         await userApi.updateUser({ ...values, id: selectedUser.id });
         showSnackbar('Staff updated successfully', 'success');
       } else {
-        // Note: Create user API not implemented in frontend yet
-        // await userApi.createUser(values);
-        showSnackbar('Create functionality coming soon', 'warning');
+        await createStaff(values.email, values.password);
+        showSnackbar('Staff created successfully', 'success');
       }
       fetchStaff();
       setDialogOpen(false);

@@ -1,6 +1,7 @@
 import { StorageKey, UserRole } from '@/constants';
 import { apiClient } from '@/libs';
 import { ResponseObject } from '@/types';
+import { UserDto } from '@/types/api';
 
 export const authenticate = async (email: string, password: string): Promise<string> => {
   const response = await apiClient.post<ResponseObject<{ token: string }>>('/auth/login', {
@@ -11,35 +12,31 @@ export const authenticate = async (email: string, password: string): Promise<str
   return response.data.payload.token;
 };
 
-export const createCustomer = async (email: string, password: string): Promise<void> => {
-  await apiClient.post<ResponseObject<{ token: string }>>('/auth/register', {
+export const createCustomer = async (email: string, password: string): Promise<UserDto> => {
+  const response = await apiClient.post<ResponseObject<UserDto>>('/auth/register', {
     email,
     password,
     role: UserRole.CUSTOMER,
   });
+  return response.data.payload;
 };
 
-export const createAdmin = async (email: string, password: string): Promise<void> => {
-  await apiClient.post<ResponseObject<{ token: string }>>('/auth/register', {
+export const createAdmin = async (email: string, password: string): Promise<UserDto> => {
+  const response = await apiClient.post<ResponseObject<UserDto>>('/auth/register', {
     email,
     password,
     role: UserRole.ADMIN,
   });
+  return response.data.payload;
 };
 
-export const createStaff = async (email: string, password: string): Promise<void> => {
-  await apiClient.post<ResponseObject<{ token: string }>>('/auth/register', {
+export const createStaff = async (email: string, password: string): Promise<UserDto> => {
+  const response = await apiClient.post<ResponseObject<UserDto>>('/auth/register', {
     email,
     password,
     role: UserRole.STAFF,
   });
-};
-
-export const changePassword = async (oldPassword: string, newPassword: string): Promise<void> => {
-  await apiClient.post<ResponseObject<void>>('/auth/change-password', {
-    oldPassword,
-    newPassword,
-  });
+  return response.data.payload;
 };
 
 export const logout = async (): Promise<void> => {

@@ -1,7 +1,7 @@
-import { fetchFields } from '@/api';
+import { fetchFields, FieldFilters } from '@/api';
 
-export const getFields = async () => {
-  const fields = await fetchFields();
+export const getFields = async (filters?: FieldFilters) => {
+  const fields = await fetchFields(filters);
 
   return fields;
 };
