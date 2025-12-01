@@ -1,4 +1,4 @@
-import { createField, fetchFields } from '@/api/field';
+import { createField, deleteField, fetchFields, updateField } from '@/api/field';
 import { useToast } from '@/hooks';
 import { Add } from '@mui/icons-material';
 import { Box, Button, CircularProgress, Container, Typography } from '@mui/material';
@@ -34,8 +34,8 @@ const FieldManagementPage: FC = () => {
     try {
       if (selectedField?.id) {
         // Update field - API call would go here
-        // await updateField(selectedField.id, values);
-        showToast('Chức năng cập nhật sẽ sớm ra mắt', 'error');
+        await updateField(selectedField.id, values);
+        showToast('Cập nhật sân bóng thành công', 'success');
       } else {
         await createField({
           name: values.name!,
@@ -60,12 +60,11 @@ const FieldManagementPage: FC = () => {
   };
 
   const handleDelete = async (_id: string) => {
-    if (window.confirm('Are you sure you want to delete this field?')) {
+    if (window.confirm('Bạn có chắc chắn muốn xóa sân bóng này không?')) {
       try {
-        // Note: Delete endpoint not implemented in API yet
-        // await deleteField(id);
-        showToast('Chức năng xóa sẽ sớm ra mắt', 'error');
-        // fetchFieldsData();
+        await deleteField(_id);
+        showToast('Xóa sân bóng thành công', 'success');
+        fetchFieldsData();
       } catch (error) {
         showToast('Failed to delete field', 'error');
       }

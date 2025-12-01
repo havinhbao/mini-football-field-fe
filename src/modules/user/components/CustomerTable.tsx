@@ -4,21 +4,21 @@ import { FC } from 'react';
 
 const columns: GridColDef[] = [
   { field: 'id', headerName: 'ID', width: 70 },
-  { field: 'firstName', headerName: 'First name', width: 130 },
-  { field: 'lastName', headerName: 'Last name', width: 130 },
+  { field: 'firstName', headerName: 'Tên', width: 130 },
+  { field: 'lastName', headerName: 'Họ', width: 130 },
   {
     field: 'age',
-    headerName: 'Age',
+    headerName: 'Tuổi',
     type: 'number',
     width: 90,
   },
   {
     field: 'fullName',
-    headerName: 'Full name',
+    headerName: 'Họ và tên',
     description: 'This column has a value getter and is not sortable.',
     sortable: false,
     width: 160,
-    valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
+    valueGetter: (_, row) => `${row.firstName || ''} ${row.lastName || ''}`,
   },
 ];
 

@@ -1,3 +1,4 @@
+import { buildPriceString } from '@/utils';
 import { Cancel, CheckCircle, Delete, Edit, Payment } from '@mui/icons-material';
 import { Box, Chip, IconButton, Tooltip } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
@@ -22,6 +23,13 @@ const statusColors = {
   canceled: 'error',
 } as const;
 
+const displayStatus: Record<string, string> = {
+  pending: 'Đang chờ',
+  confirmed: 'Đã xác nhận',
+  paid: 'Đã thanh toán',
+  canceled: 'Đã hủy',
+};
+
 export const BookingList: FC<BookingListProps> = ({
   bookings,
   loading,
@@ -34,41 +42,41 @@ export const BookingList: FC<BookingListProps> = ({
   const columns: GridColDef[] = [
     {
       field: 'date',
-      headerName: 'Date',
+      headerName: 'Ngày đặt',
       width: 120,
       renderCell: (params: GridRenderCellParams) => format(new Date(params.value), 'MMM dd, yyyy'),
     },
     {
       field: 'time',
-      headerName: 'Time',
+      headerName: 'Thời gian',
       width: 130,
       valueGetter: (_value, row) => `${row.startTime} - ${row.endTime}`,
     },
     {
       field: 'field',
-      headerName: 'Field',
+      headerName: 'Sân',
       width: 150,
       valueGetter: (_value, row) => row.field?.name || 'N/A',
     },
     {
       field: 'user',
-      headerName: 'Customer',
+      headerName: 'Khách hàng',
       width: 180,
       valueGetter: (_value, row) => row.user?.fullName || row.user?.email || 'N/A',
     },
     {
       field: 'totalPrice',
-      headerName: 'Price',
+      headerName: 'Giá',
       width: 100,
-      renderCell: (params: GridRenderCellParams) => `$${params.value?.toFixed(2) || '0.00'}`,
+      renderCell: (params: GridRenderCellParams) => buildPriceString(params.value as number),
     },
     {
       field: 'status',
-      headerName: 'Status',
+      headerName: 'Trạng thái',
       width: 120,
       renderCell: (params: GridRenderCellParams) => (
         <Chip
-          label={params.value}
+          label={displayStatus[params.value as keyof typeof displayStatus] || params.value}
           color={statusColors[params.value as keyof typeof statusColors] || 'default'}
           size="small"
           sx={{ textTransform: 'capitalize' }}
@@ -77,11 +85,11 @@ export const BookingList: FC<BookingListProps> = ({
     },
     {
       field: 'paymentStatus',
-      headerName: 'Payment',
+      headerName: 'Thanh toán',
       width: 120,
       renderCell: (params: GridRenderCellParams) => (
         <Chip
-          label={params.value}
+          label={params.value === 'paid' ? 'Đã thanh toán' : 'Chưa thanh toán'}
           color={params.value === 'paid' ? 'success' : 'default'}
           size="small"
           variant="outlined"
@@ -91,7 +99,7 @@ export const BookingList: FC<BookingListProps> = ({
     },
     {
       field: 'actions',
-      headerName: 'Actions',
+      headerName: 'Hành động',
       width: 200,
       sortable: false,
       renderCell: (params: GridRenderCellParams) => {
@@ -103,7 +111,7 @@ export const BookingList: FC<BookingListProps> = ({
         return (
           <Box sx={{ display: 'flex', gap: 0.5 }}>
             {!isCanceled && (
-              <Tooltip title="Edit">
+              <Tooltip title="Chỉnh sửa">
                 <IconButton size="small" onClick={() => onEdit(booking)} color="primary">
                   <Edit fontSize="small" />
                 </IconButton>
@@ -111,7 +119,7 @@ export const BookingList: FC<BookingListProps> = ({
             )}
 
             {isPending && (
-              <Tooltip title="Confirm">
+              <Tooltip title="Xác nhận">
                 <IconButton size="small" onClick={() => onConfirm(booking.id)} color="info">
                   <CheckCircle fontSize="small" />
                 </IconButton>
@@ -119,7 +127,7 @@ export const BookingList: FC<BookingListProps> = ({
             )}
 
             {isConfirmed && (
-              <Tooltip title="Mark as Paid">
+              <Tooltip title="Đánh dấu đã thanh toán">
                 <IconButton size="small" onClick={() => onPay(booking.id)} color="success">
                   <Payment fontSize="small" />
                 </IconButton>
@@ -127,14 +135,14 @@ export const BookingList: FC<BookingListProps> = ({
             )}
 
             {!isCanceled && (
-              <Tooltip title="Cancel">
+              <Tooltip title="Hủy đặt">
                 <IconButton size="small" onClick={() => onCancel(booking.id)} color="warning">
                   <Cancel fontSize="small" />
                 </IconButton>
               </Tooltip>
             )}
 
-            <Tooltip title="Delete">
+            <Tooltip title="Xóa">
               <IconButton size="small" onClick={() => onDelete(booking.id)} color="error">
                 <Delete fontSize="small" />
               </IconButton>

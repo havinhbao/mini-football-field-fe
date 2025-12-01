@@ -32,12 +32,12 @@ interface BookingDialogProps {
 }
 
 const validationSchema = Yup.object({
-  fieldId: Yup.string().required('Field is required'),
-  date: Yup.date().required('Date is required'),
-  startTime: Yup.string().required('Start time is required'),
+  fieldId: Yup.string().required('Vui lòng chọn sân bóng'),
+  date: Yup.date().required('Vui lòng chọn ngày'),
+  startTime: Yup.string().required('Vui lòng chọn giờ bắt đầu'),
   endTime: Yup.string()
-    .required('End time is required')
-    .test('is-after-start', 'End time must be after start time', function (value) {
+    .required('Vui lòng chọn giờ kết thúc')
+    .test('is-after-start', 'Giờ kết thúc phải sau giờ bắt đầu', function (value) {
       const { startTime } = this.parent;
       if (!startTime || !value) return true;
       return value > startTime;
@@ -89,10 +89,12 @@ export const BookingDialog: FC<BookingDialogProps> = ({
       onClose={onClose}
       maxWidth="sm"
       fullWidth
-      PaperProps={{
-        sx: {
-          borderRadius: 3,
-          boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+      slotProps={{
+        paper: {
+          sx: {
+            borderRadius: 3,
+            boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+          },
         },
       }}
     >
@@ -106,7 +108,7 @@ export const BookingDialog: FC<BookingDialogProps> = ({
         }}
       >
         <Typography variant="h6" sx={{ fontWeight: 600 }}>
-          {booking?.id ? 'Edit Booking' : 'Create New Booking'}
+          {booking?.id ? 'Chỉnh sửa đặt sân' : 'Tạo đặt sân mới'}
         </Typography>
         <IconButton onClick={onClose} sx={{ color: 'white' }}>
           <Close />
@@ -119,7 +121,7 @@ export const BookingDialog: FC<BookingDialogProps> = ({
             <TextField
               select
               fullWidth
-              label="Field"
+              label="Chọn Sân Bóng"
               name="fieldId"
               value={formik.values.fieldId}
               onChange={formik.handleChange}
@@ -136,38 +138,50 @@ export const BookingDialog: FC<BookingDialogProps> = ({
             <TextField
               fullWidth
               type="date"
-              label="Date"
+              label="Chọn Ngày"
               name="date"
               value={formik.values.date}
               onChange={formik.handleChange}
               error={formik.touched.date && Boolean(formik.errors.date)}
               helperText={formik.touched.date && formik.errors.date}
-              InputLabelProps={{ shrink: true }}
+              slotProps={{
+                inputLabel: {
+                  shrink: true,
+                },
+              }}
             />
 
             <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
               <TextField
                 fullWidth
                 type="time"
-                label="Start Time"
+                label="Chọn Giờ Bắt Đầu"
                 name="startTime"
                 value={formik.values.startTime}
                 onChange={formik.handleChange}
                 error={formik.touched.startTime && Boolean(formik.errors.startTime)}
                 helperText={formik.touched.startTime && formik.errors.startTime}
-                InputLabelProps={{ shrink: true }}
+                slotProps={{
+                  inputLabel: {
+                    shrink: true,
+                  },
+                }}
               />
 
               <TextField
                 fullWidth
                 type="time"
-                label="End Time"
+                label="Chọn Giờ Kết Thúc"
                 name="endTime"
                 value={formik.values.endTime}
                 onChange={formik.handleChange}
                 error={formik.touched.endTime && Boolean(formik.errors.endTime)}
                 helperText={formik.touched.endTime && formik.errors.endTime}
-                InputLabelProps={{ shrink: true }}
+                slotProps={{
+                  inputLabel: {
+                    shrink: true,
+                  },
+                }}
               />
             </Box>
 
@@ -175,7 +189,7 @@ export const BookingDialog: FC<BookingDialogProps> = ({
               fullWidth
               multiline
               rows={3}
-              label="Note (Optional)"
+              label="Ghi chú (Tùy chọn)"
               name="note"
               value={formik.values.note}
               onChange={formik.handleChange}
@@ -187,7 +201,7 @@ export const BookingDialog: FC<BookingDialogProps> = ({
 
         <DialogActions sx={{ p: 2.5, pt: 0 }}>
           <Button onClick={onClose} variant="outlined" sx={{ borderRadius: 2 }}>
-            Cancel
+            Hủy
           </Button>
           <Button
             type="submit"
@@ -201,7 +215,7 @@ export const BookingDialog: FC<BookingDialogProps> = ({
               },
             }}
           >
-            {booking?.id ? 'Update' : 'Create'} Booking
+            {booking?.id ? 'Cập nhật' : 'Tạo'} Đặt Sân
           </Button>
         </DialogActions>
       </form>

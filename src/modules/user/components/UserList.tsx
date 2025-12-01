@@ -1,17 +1,9 @@
+import { UserRole } from '@/constants';
 import { Delete, Edit, Person } from '@mui/icons-material';
-import {
-  Avatar,
-  Box,
-  Chip,
-  IconButton,
-  Paper,
-  Tooltip,
-  Typography,
-} from '@mui/material';
+import { Avatar, Box, Chip, IconButton, Paper, Tooltip, Typography } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { format } from 'date-fns';
 import { FC } from 'react';
-import { UserRole } from '@/constants';
 import { User } from '../types';
 
 interface UserListProps {
@@ -31,7 +23,7 @@ export const UserList: FC<UserListProps> = ({ users, loading, onEdit, onDelete }
   const columns: GridColDef[] = [
     {
       field: 'fullName',
-      headerName: 'User',
+      headerName: 'Họ và Tên',
       width: 250,
       renderCell: (params: GridRenderCellParams) => (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -58,13 +50,13 @@ export const UserList: FC<UserListProps> = ({ users, loading, onEdit, onDelete }
     },
     {
       field: 'phoneNumber',
-      headerName: 'Phone',
+      headerName: 'Số điện thoại',
       width: 150,
       valueGetter: (_value, row) => row.phoneNumber || 'N/A',
     },
     {
       field: 'role',
-      headerName: 'Role',
+      headerName: 'Vai trò',
       width: 120,
       renderCell: (params: GridRenderCellParams) => (
         <Chip
@@ -77,19 +69,19 @@ export const UserList: FC<UserListProps> = ({ users, loading, onEdit, onDelete }
     },
     {
       field: 'createdAt',
-      headerName: 'Joined Date',
+      headerName: 'Ngày tham gia',
       width: 150,
       valueGetter: (_value, row) =>
         row.createdAt ? format(new Date(row.createdAt), 'dd/MM/yyyy') : 'N/A',
     },
     {
       field: 'actions',
-      headerName: 'Actions',
+      headerName: 'Hành động',
       width: 120,
       sortable: false,
       renderCell: (params: GridRenderCellParams) => (
         <Box sx={{ display: 'flex', gap: 1 }}>
-          <Tooltip title="Edit">
+          <Tooltip title="Chỉnh sửa">
             <IconButton
               size="small"
               onClick={() => onEdit(params.row)}
@@ -99,7 +91,7 @@ export const UserList: FC<UserListProps> = ({ users, loading, onEdit, onDelete }
             </IconButton>
           </Tooltip>
           {onDelete && (
-            <Tooltip title="Delete">
+            <Tooltip title="Xóa người dùng">
               <IconButton
                 size="small"
                 onClick={() => onDelete(params.row.id)}

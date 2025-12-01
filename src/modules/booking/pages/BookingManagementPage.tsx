@@ -9,10 +9,10 @@ import {
   PayBookingDto,
   updateBooking,
 } from '@/api/booking';
+import { useToast } from '@/hooks';
 import { getFields } from '@/modules/field/services';
 import { Add, CalendarMonth, List } from '@mui/icons-material';
 import {
-  Alert,
   Box,
   Button,
   CircularProgress,
@@ -21,7 +21,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Snackbar,
   Tab,
   Tabs,
   TextField,
@@ -40,6 +39,7 @@ interface Field {
 }
 
 const BookingManagementPage: FC = () => {
+  const { showToast } = useToast();
   const [activeTab, setActiveTab] = useState(0);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [fields, setFields] = useState<Field[]>([]);
@@ -52,11 +52,6 @@ const BookingManagementPage: FC = () => {
   const [payDialogOpen, setPayDialogOpen] = useState(false);
   const [bookingToPay, setBookingToPay] = useState<string | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'banking' | 'momo'>('cash');
-  const [snackbar, setSnackbar] = useState({
-    open: false,
-    message: '',
-    severity: 'success' as 'success' | 'error',
-  });
 
   const fetchBookings = async () => {
     setLoading(true);
@@ -64,7 +59,7 @@ const BookingManagementPage: FC = () => {
       const response = await getBookings({ limit: 1000 });
       setBookings(response.data as Booking[]);
     } catch (error) {
-      showSnackbar('Failed to fetch bookings', 'error');
+      showToast('Tải danh sách đặt sân thất bại', 'error');
     } finally {
       setLoading(false);
     }
@@ -75,7 +70,7 @@ const BookingManagementPage: FC = () => {
       const response = await getFields();
       setFields(response);
     } catch (error) {
-      showSnackbar('Failed to fetch fields', 'error');
+      showToast('Tải danh sách sân thất bại', 'error');
     }
   };
 
@@ -86,27 +81,26 @@ const BookingManagementPage: FC = () => {
 
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [bookingToConfirm, setBookingToConfirm] = useState<string | null>(null);
-  const [confirmPaymentMethod, setConfirmPaymentMethod] = useState<'cash' | 'banking' | 'momo'>('cash');
-  const [confirmDepositAmount, setConfirmDepositAmount] = useState<number>(0);
+  const [confirmPaymentMethod, setConfirmPaymentMethod] = useState<'cash' | 'banking' | 'momo'>(
+    'cash',
+  );
 
-  const showSnackbar = (message: string, severity: 'success' | 'error') => {
-    setSnackbar({ open: true, message, severity });
-  };
+  const [confirmDepositAmount, setConfirmDepositAmount] = useState<number>(0);
 
   const handleCreateBooking = async (values: CreateBookingDto) => {
     try {
       if (selectedBooking?.id) {
         await updateBooking(selectedBooking.id, values);
-        showSnackbar('Booking updated successfully', 'success');
+        showToast('Cập nhật đặt sân thành công', 'success');
       } else {
         await createBooking(values);
-        showSnackbar('Booking created successfully', 'success');
+        showToast('Tạo đặt sân thành công', 'success');
       }
       fetchBookings();
       setDialogOpen(false);
       setSelectedBooking(null);
     } catch (error) {
-      showSnackbar('Failed to save booking', 'error');
+      showToast('Lưu đặt sân thất bại', 'error');
     }
   };
 
@@ -119,10 +113,10 @@ const BookingManagementPage: FC = () => {
     if (window.confirm('Are you sure you want to delete this booking?')) {
       try {
         await deleteBooking(id);
-        showSnackbar('Booking deleted successfully', 'success');
+        showToast('Xóa đặt sân thành công', 'success');
         fetchBookings();
       } catch (error) {
-        showSnackbar('Failed to delete booking', 'error');
+        showToast('Xóa đặt sân thất bại', 'error');
       }
     }
   };
@@ -136,28 +130,26 @@ const BookingManagementPage: FC = () => {
     if (!bookingToCancel) return;
     try {
       await cancelBooking(bookingToCancel, cancelReason, false);
-      showSnackbar('Booking canceled successfully', 'success');
+      showToast('Hủy đặt sân thành công', 'success');
       fetchBookings();
       setCancelDialogOpen(false);
       setCancelReason('');
       setBookingToCancel(null);
     } catch (error) {
-      showSnackbar('Failed to cancel booking', 'error');
+      showToast('Hủy đặt sân thất bại', 'error');
     }
   };
 
   const handleConfirmClick = (id: string) => {
     setBookingToConfirm(id);
-    // Reset defaults
     setConfirmPaymentMethod('cash');
     setConfirmDepositAmount(0);
-    
-    // Find booking to set default deposit amount if needed
-    const booking = bookings.find(b => b.id === id);
+
+    const booking = bookings.find((b) => b.id === id);
     if (booking) {
       setConfirmDepositAmount(booking.totalPrice);
     }
-    
+
     setConfirmDialogOpen(true);
   };
 
@@ -171,18 +163,18 @@ const BookingManagementPage: FC = () => {
       // Or we can add a "Confirm without Payment" button?
       // The requirement says "if payment is cash, and admin confirm so that it can align with changes from backend".
       // So we should send payment details if provided.
-      
+
       await confirmBooking(bookingToConfirm, {
         paymentMethod: confirmPaymentMethod,
-        depositAmount: confirmDepositAmount
+        depositAmount: confirmDepositAmount,
       });
-      
-      showSnackbar('Booking confirmed successfully', 'success');
+
+      showToast('Xác nhận đặt sân thành công', 'success');
       fetchBookings();
       setConfirmDialogOpen(false);
       setBookingToConfirm(null);
     } catch (error) {
-      showSnackbar('Failed to confirm booking', 'error');
+      showToast('Xác nhận đặt sân thất bại', 'error');
     }
   };
 
@@ -196,12 +188,12 @@ const BookingManagementPage: FC = () => {
     try {
       const payload: PayBookingDto = { paymentMethod };
       await payBooking(bookingToPay, payload);
-      showSnackbar('Payment recorded successfully', 'success');
+      showToast('Thanh toán thành công', 'success');
       fetchBookings();
       setPayDialogOpen(false);
       setBookingToPay(null);
     } catch (error) {
-      showSnackbar('Failed to record payment', 'error');
+      showToast('Thanh toán thất bại', 'error');
     }
   };
 
@@ -240,14 +232,10 @@ const BookingManagementPage: FC = () => {
               mb: 1,
             }}
           >
-            Booking Management
-          </Typography>
-          <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-            Manage your football field bookings with ease
+            Quản Lý Đặt Sân
           </Typography>
         </Box>
 
-        {/* Tabs and Create Button */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
           <Tabs
             value={activeTab}
@@ -263,8 +251,8 @@ const BookingManagementPage: FC = () => {
               },
             }}
           >
-            <Tab icon={<CalendarMonth />} iconPosition="start" label="Calendar View" />
-            <Tab icon={<List />} iconPosition="start" label="List View" />
+            <Tab icon={<CalendarMonth />} iconPosition="start" label="Lịch" />
+            <Tab icon={<List />} iconPosition="start" label="Danh sách" />
           </Tabs>
 
           <Button
@@ -283,7 +271,7 @@ const BookingManagementPage: FC = () => {
               },
             }}
           >
-            New Booking
+            Đặt sân
           </Button>
         </Box>
 
@@ -316,7 +304,6 @@ const BookingManagementPage: FC = () => {
           </>
         )}
 
-        {/* Booking Dialog */}
         <BookingDialog
           open={dialogOpen}
           onClose={() => {
@@ -328,7 +315,6 @@ const BookingManagementPage: FC = () => {
           fields={fields}
         />
 
-        {/* Cancel Dialog */}
         <Dialog
           open={cancelDialogOpen}
           onClose={() => setCancelDialogOpen(false)}
@@ -348,9 +334,9 @@ const BookingManagementPage: FC = () => {
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setCancelDialogOpen(false)}>Cancel</Button>
+            <Button onClick={() => setCancelDialogOpen(false)}>Hủy</Button>
             <Button onClick={handleCancelConfirm} variant="contained" color="warning">
-              Confirm Cancellation
+              Xác nhận hủy
             </Button>
           </DialogActions>
         </Dialog>
@@ -365,15 +351,17 @@ const BookingManagementPage: FC = () => {
           <DialogTitle>Confirm Booking</DialogTitle>
           <DialogContent>
             <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
-              You can optionally record a payment or deposit when confirming this booking.
+              Bạn có thể xác nhận đặt sân và ghi nhận thanh toán (nếu có) tại đây.
             </Typography>
-            
+
             <TextField
               select
               fullWidth
               label="Payment Method"
               value={confirmPaymentMethod}
-              onChange={(e) => setConfirmPaymentMethod(e.target.value as 'cash' | 'banking' | 'momo')}
+              onChange={(e) =>
+                setConfirmPaymentMethod(e.target.value as 'cash' | 'banking' | 'momo')
+              }
               sx={{ mb: 2 }}
               slotProps={{
                 select: {
@@ -381,8 +369,8 @@ const BookingManagementPage: FC = () => {
                 },
               }}
             >
-              <option value="cash">Cash</option>
-              <option value="banking">Banking</option>
+              <option value="cash">Tiền mặt</option>
+              <option value="banking">Chuyển khoản</option>
               <option value="momo">MoMo</option>
             </TextField>
 
@@ -396,27 +384,27 @@ const BookingManagementPage: FC = () => {
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setConfirmDialogOpen(false)}>Cancel</Button>
-            <Button 
+            <Button onClick={() => setConfirmDialogOpen(false)}>Hủy</Button>
+            <Button
               onClick={async () => {
                 if (!bookingToConfirm) return;
                 try {
                   // Confirm without payment
                   await confirmBooking(bookingToConfirm);
-                  showSnackbar('Booking confirmed successfully', 'success');
+                  showToast('Booking confirmed successfully', 'success');
                   fetchBookings();
                   setConfirmDialogOpen(false);
                   setBookingToConfirm(null);
                 } catch (error) {
-                  showSnackbar('Failed to confirm booking', 'error');
+                  showToast('Failed to confirm booking', 'error');
                 }
               }}
               color="primary"
             >
-              Confirm Only
+              Xác nhận không thanh toán
             </Button>
             <Button onClick={handleConfirmSubmit} variant="contained" color="success">
-              Confirm & Pay
+              Xác nhận & Thanh toán
             </Button>
           </DialogActions>
         </Dialog>
@@ -428,12 +416,12 @@ const BookingManagementPage: FC = () => {
           maxWidth="sm"
           fullWidth
         >
-          <DialogTitle>Record Payment</DialogTitle>
+          <DialogTitle>Ghi nhận thanh toán</DialogTitle>
           <DialogContent>
             <TextField
               select
               fullWidth
-              label="Payment Method"
+              label="Phương thức thanh toán"
               value={paymentMethod}
               onChange={(e) => setPaymentMethod(e.target.value as 'cash' | 'banking' | 'momo')}
               sx={{ mt: 2 }}
@@ -443,30 +431,18 @@ const BookingManagementPage: FC = () => {
                 },
               }}
             >
-              <option value="cash">Cash</option>
-              <option value="banking">Banking</option>
+              <option value="cash">Tiền mặt</option>
+              <option value="banking">Chuyển khoản</option>
               <option value="momo">MoMo</option>
             </TextField>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setPayDialogOpen(false)}>Cancel</Button>
+            <Button onClick={() => setPayDialogOpen(false)}>Hủy</Button>
             <Button onClick={handlePayConfirm} variant="contained" color="success">
-              Confirm Payment
+              Xác nhận thanh toán
             </Button>
           </DialogActions>
         </Dialog>
-
-        {/* Snackbar */}
-        <Snackbar
-          open={snackbar.open}
-          autoHideDuration={4000}
-          onClose={() => setSnackbar({ ...snackbar, open: false })}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        >
-          <Alert severity={snackbar.severity} variant="filled">
-            {snackbar.message}
-          </Alert>
-        </Snackbar>
       </Container>
     </Box>
   );

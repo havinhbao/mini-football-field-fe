@@ -31,7 +31,7 @@ export type Field = {
   updatedAt: Date;
 };
 
-export type FieldFilters= {
+export type FieldFilters = {
   currentTime?: string;
   size?: FieldSize;
   status?: FieldStatus;
@@ -58,5 +58,10 @@ export const updateField = async (id: string, payload: UpdateFieldPayload) => {
 
 export const getFieldById = async (id: string) => {
   const response = await apiClient.get<ResponseObject<Field | null>>(`/fields/${id}`);
+  return response.data.payload;
+};
+
+export const deleteField = async (id: string) => {
+  const response = await apiClient.delete<ResponseObject<void>>(`/fields/${id}`);
   return response.data.payload;
 };

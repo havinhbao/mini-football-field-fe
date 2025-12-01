@@ -29,6 +29,13 @@ const statusColors = {
   canceled: '#EF5350',
 };
 
+const displayStatus: Record<string, string> = {
+  pending: 'Đang chờ',
+  confirmed: 'Đã xác nhận',
+  paid: 'Đã thanh toán',
+  canceled: 'Đã hủy',
+};
+
 export const BookingCalendar: FC<BookingCalendarProps> = ({
   bookings,
   onDateClick,
@@ -81,7 +88,6 @@ export const BookingCalendar: FC<BookingCalendarProps> = ({
         ))}
       </Box>
 
-      {/* Calendar Grid */}
       <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 1 }}>
         {calendarDays.map((day) => {
           const dayBookings = getBookingsForDay(day);
@@ -117,7 +123,6 @@ export const BookingCalendar: FC<BookingCalendarProps> = ({
                 {format(day, 'd')}
               </Typography>
 
-              {/* Booking indicators */}
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                 {dayBookings.slice(0, 2).map((booking) => (
                   <Tooltip
@@ -155,13 +160,12 @@ export const BookingCalendar: FC<BookingCalendarProps> = ({
         })}
       </Box>
 
-      {/* Legend */}
       <Box sx={{ display: 'flex', gap: 2, mt: 3, flexWrap: 'wrap' }}>
         {Object.entries(statusColors).map(([status, color]) => (
           <Box key={status} sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
             <Box sx={{ width: 12, height: 12, borderRadius: '50%', backgroundColor: color }} />
             <Typography sx={{ fontSize: '0.875rem', textTransform: 'capitalize' }}>
-              {status}
+              {displayStatus[status]}
             </Typography>
           </Box>
         ))}
