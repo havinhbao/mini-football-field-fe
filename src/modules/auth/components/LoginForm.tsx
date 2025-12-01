@@ -58,7 +58,7 @@ const LoginForm = () => {
         p: 2,
       }}
     >
-      <Paper elevation={3} sx={{ width: 380, p: 4, borderRadius: 2 }}>
+      <Paper elevation={3} sx={{ width: 420, p: 4, borderRadius: 2 }}>
         <Typography variant="h5" fontWeight={600} textAlign="center" mb={3}>
           {AppContext.login}
         </Typography>

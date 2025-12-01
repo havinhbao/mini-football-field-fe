@@ -83,11 +83,6 @@ const SideBar: FC<SideBarProps> = ({ open }) => {
             path: buildPath(RoutePaths.DASHBOARD, RoutePaths.DASHBOARD_SUBPATHS.CUSTOMERS),
           },
           {
-            title: AppContext.staffs,
-            icon: <PeopleIcon />,
-            path: buildPath(RoutePaths.DASHBOARD, RoutePaths.DASHBOARD_SUBPATHS.STAFFS),
-          },
-          {
             title: AppContext.revenue,
             icon: <MonetizationOnIcon />,
             path: buildPath(RoutePaths.DASHBOARD, RoutePaths.DASHBOARD_SUBPATHS.REVENUE),

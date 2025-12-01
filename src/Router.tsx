@@ -11,7 +11,6 @@ import { OverviewPage } from './modules/overview';
 import { RevenueManagementPage } from './modules/revenue';
 import { CustomerManagementPage, StaffManagementPage } from './modules/user';
 
-// Root Redirect - Redirects based on authentication and role
 const RootRedirect = () => {
   if (!isAuthenticated()) {
     return <Navigate to={RoutePaths.LOGIN} replace />;
@@ -22,11 +21,9 @@ const RootRedirect = () => {
     return <Navigate to={RoutePaths.DASHBOARD} replace />;
   }
 
-  // Customer role or default
   return <FieldPage />;
 };
 
-// Customer Route Guard - Only for CUSTOMER role
 const CustomerRoute = ({ children }: { children: JSX.Element }) => {
   if (!isAuthenticated()) {
     return <Navigate to={RoutePaths.LOGIN} replace />;
@@ -40,7 +37,6 @@ const CustomerRoute = ({ children }: { children: JSX.Element }) => {
   return children;
 };
 
-// Admin Route Guard - Only for ADMIN and STAFF roles
 const AdminRoute = ({ children }: { children: JSX.Element }) => {
   if (!isAuthenticated()) {
     return <Navigate to={RoutePaths.LOGIN} replace />;
@@ -54,7 +50,6 @@ const AdminRoute = ({ children }: { children: JSX.Element }) => {
   return children;
 };
 
-// Public Route - Redirect if authenticated based on role
 const PublicRoute = ({ children }: { children: JSX.Element }) => {
   if (isAuthenticated()) {
     const role = getUserRole();
@@ -70,10 +65,8 @@ const PublicRoute = ({ children }: { children: JSX.Element }) => {
 export const Router: FC = () => {
   return (
     <Routes>
-      {/* Root Route - Role-based redirect */}
       <Route path="/" element={<RootRedirect />} />
 
-      {/* Public Routes */}
       <Route
         path={RoutePaths.LOGIN}
         element={
@@ -90,8 +83,15 @@ export const Router: FC = () => {
           </PublicRoute>
         }
       />
+      <Route
+        path={RoutePaths.FORGOT_PASSWORD}
+        element={
+          <PublicRoute>
+            <div>Forgot Password Page</div>
+          </PublicRoute>
+        }
+      />
 
-      {/* Customer Protected Routes */}
       <Route
         path={RoutePaths.BOOK_FIELD}
         element={
@@ -125,7 +125,6 @@ export const Router: FC = () => {
         }
       />
 
-      {/* Admin/Staff Protected Routes */}
       <Route
         path={RoutePaths.DASHBOARD}
         element={

@@ -1,3 +1,4 @@
+import { FieldSize, FieldStatus, FieldType } from '@/constants';
 import { Close } from '@mui/icons-material';
 import {
   Box,
@@ -14,7 +15,6 @@ import {
 import { useFormik } from 'formik';
 import { FC, useEffect } from 'react';
 import * as Yup from 'yup';
-import { FieldSize, FieldStatus, FieldType } from '@/constants';
 import { Field } from '../types';
 
 interface FieldDialogProps {
@@ -24,14 +24,32 @@ interface FieldDialogProps {
   field?: Field;
 }
 
+const displayStatus: Record<FieldStatus, string> = {
+  available: 'Khả dụng',
+  maintenance: 'Bảo trì',
+  unavailable: 'Không khả dụng',
+  inactive: 'Không hoạt động',
+  booked: 'Đã đặt',
+};
+
+const displaySize: Record<FieldSize, string> = {
+  [FieldSize.FIVE_SIDE]: 'Sân 5',
+  [FieldSize.SEVEN_SIDE]: 'Sân 7',
+};
+
+const displayType: Record<FieldType, string> = {
+  [FieldType.ARTIFICIAL]: 'Sân cỏ nhân tạo',
+  [FieldType.NATURAL]: 'Sân cỏ tự nhiên',
+  [FieldType.FUTSAL]: 'Sân futsal',
+  [FieldType.INDOOR]: 'Sân trong nhà',
+};
+
 const validationSchema = Yup.object({
-  name: Yup.string().required('Field name is required'),
-  size: Yup.string().required('Size is required'),
-  type: Yup.string().required('Type is required'),
-  pricePerHour: Yup.number()
-    .required('Price per hour is required')
-    .min(0, 'Price must be positive'),
-  status: Yup.string().required('Status is required'),
+  name: Yup.string().required('Tên sân bóng là bắt buộc'),
+  size: Yup.string().required('Kích thước là bắt buộc'),
+  type: Yup.string().required('Loại sân là bắt buộc'),
+  pricePerHour: Yup.number().required('Giá theo giờ là bắt buộc').min(0, 'Giá phải là số dương'),
+  status: Yup.string().required('Trạng thái là bắt buộc'),
   description: Yup.string(),
 });
 
@@ -65,10 +83,12 @@ export const FieldDialog: FC<FieldDialogProps> = ({ open, onClose, onSubmit, fie
       onClose={onClose}
       maxWidth="sm"
       fullWidth
-      PaperProps={{
-        sx: {
-          borderRadius: 3,
-          boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+      slotProps={{
+        paper: {
+          sx: {
+            borderRadius: 3,
+            boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+          },
         },
       }}
     >
@@ -82,7 +102,7 @@ export const FieldDialog: FC<FieldDialogProps> = ({ open, onClose, onSubmit, fie
         }}
       >
         <Typography variant="h6" sx={{ fontWeight: 600 }}>
-          {field?.id ? 'Edit Field' : 'Create New Field'}
+          {field?.id ? 'Chỉnh sửa sân bóng' : 'Tạo sân bóng mới'}
         </Typography>
         <IconButton onClick={onClose} sx={{ color: 'white' }}>
           <Close />
@@ -94,7 +114,7 @@ export const FieldDialog: FC<FieldDialogProps> = ({ open, onClose, onSubmit, fie
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
             <TextField
               fullWidth
-              label="Field Name"
+              label="Tên sân bóng"
               name="name"
               value={formik.values.name}
               onChange={formik.handleChange}
@@ -106,7 +126,7 @@ export const FieldDialog: FC<FieldDialogProps> = ({ open, onClose, onSubmit, fie
               <TextField
                 select
                 fullWidth
-                label="Size"
+                label="Kích thước"
                 name="size"
                 value={formik.values.size}
                 onChange={formik.handleChange}
@@ -115,7 +135,7 @@ export const FieldDialog: FC<FieldDialogProps> = ({ open, onClose, onSubmit, fie
               >
                 {Object.values(FieldSize).map((size) => (
                   <MenuItem key={size} value={size}>
-                    {size}
+                    {displaySize[size]}
                   </MenuItem>
                 ))}
               </TextField>
@@ -123,7 +143,7 @@ export const FieldDialog: FC<FieldDialogProps> = ({ open, onClose, onSubmit, fie
               <TextField
                 select
                 fullWidth
-                label="Type"
+                label="Loại sân"
                 name="type"
                 value={formik.values.type}
                 onChange={formik.handleChange}
@@ -132,7 +152,7 @@ export const FieldDialog: FC<FieldDialogProps> = ({ open, onClose, onSubmit, fie
               >
                 {Object.values(FieldType).map((type) => (
                   <MenuItem key={type} value={type}>
-                    {type.charAt(0).toUpperCase() + type.slice(1)}
+                    {displayType[type]}
                   </MenuItem>
                 ))}
               </TextField>
@@ -142,19 +162,24 @@ export const FieldDialog: FC<FieldDialogProps> = ({ open, onClose, onSubmit, fie
               <TextField
                 fullWidth
                 type="number"
-                label="Price per Hour ($)"
+                label="Giá theo giờ (VND)"
                 name="pricePerHour"
                 value={formik.values.pricePerHour}
                 onChange={formik.handleChange}
                 error={formik.touched.pricePerHour && Boolean(formik.errors.pricePerHour)}
                 helperText={formik.touched.pricePerHour && formik.errors.pricePerHour}
-                inputProps={{ min: 0, step: 0.01 }}
+                slotProps={{
+                  htmlInput: {
+                    min: 0,
+                    step: 0.01,
+                  },
+                }}
               />
 
               <TextField
                 select
                 fullWidth
-                label="Status"
+                label="Trạng thái"
                 name="status"
                 value={formik.values.status}
                 onChange={formik.handleChange}
@@ -163,7 +188,7 @@ export const FieldDialog: FC<FieldDialogProps> = ({ open, onClose, onSubmit, fie
               >
                 {Object.values(FieldStatus).map((status) => (
                   <MenuItem key={status} value={status}>
-                    {status.charAt(0).toUpperCase() + status.slice(1)}
+                    {displayStatus[status]}
                   </MenuItem>
                 ))}
               </TextField>
@@ -173,7 +198,7 @@ export const FieldDialog: FC<FieldDialogProps> = ({ open, onClose, onSubmit, fie
               fullWidth
               multiline
               rows={3}
-              label="Description (Optional)"
+              label="Mô tả (Tùy chọn)"
               name="description"
               value={formik.values.description}
               onChange={formik.handleChange}
@@ -185,7 +210,7 @@ export const FieldDialog: FC<FieldDialogProps> = ({ open, onClose, onSubmit, fie
 
         <DialogActions sx={{ p: 2.5, pt: 0 }}>
           <Button onClick={onClose} variant="outlined" sx={{ borderRadius: 2 }}>
-            Cancel
+            Hủy
           </Button>
           <Button
             type="submit"
@@ -199,7 +224,7 @@ export const FieldDialog: FC<FieldDialogProps> = ({ open, onClose, onSubmit, fie
               },
             }}
           >
-            {field?.id ? 'Update' : 'Create'} Field
+            {field?.id ? 'Cập nhật' : 'Tạo'} Sân bóng
           </Button>
         </DialogActions>
       </form>

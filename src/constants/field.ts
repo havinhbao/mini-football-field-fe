@@ -3,6 +3,7 @@ export enum FieldStatus {
   MAINTENANCE = 'maintenance',
   UNAVAILABLE = 'unavailable',
   INACTIVE = 'inactive',
+  BOOKED = 'booked',
 }
 
 export enum FieldSize {

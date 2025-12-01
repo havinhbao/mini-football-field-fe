@@ -1,3 +1,5 @@
+import { FieldSize, FieldStatus, FieldType } from '@/constants';
+import { buildPriceString } from '@/utils';
 import { Delete, Edit } from '@mui/icons-material';
 import { Box, Card, Chip, IconButton, Tooltip, Typography } from '@mui/material';
 import { FC } from 'react';
@@ -16,6 +18,26 @@ const statusColors = {
   inactive: 'default',
 } as const;
 
+const displayStatus: Record<FieldStatus, string> = {
+  available: 'Khả dụng',
+  maintenance: 'Bảo trì',
+  unavailable: 'Không khả dụng',
+  inactive: 'Không hoạt động',
+  booked: 'Đã đặt',
+};
+
+const displaySize: Record<FieldSize, string> = {
+  [FieldSize.FIVE_SIDE]: 'Sân 5',
+  [FieldSize.SEVEN_SIDE]: 'Sân 7',
+};
+
+const displayType: Record<FieldType, string> = {
+  [FieldType.ARTIFICIAL]: 'Sân cỏ nhân tạo',
+  [FieldType.NATURAL]: 'Sân cỏ tự nhiên',
+  [FieldType.FUTSAL]: 'Sân futsal',
+  [FieldType.INDOOR]: 'Sân trong nhà',
+};
+
 export const FieldCard: FC<FieldCardProps> = ({ field, onEdit, onDelete }) => {
   return (
     <Card
@@ -33,7 +55,6 @@ export const FieldCard: FC<FieldCardProps> = ({ field, onEdit, onDelete }) => {
         },
       }}
     >
-      {/* Field Image */}
       <Box
         sx={{
           width: '100%',
@@ -49,7 +70,7 @@ export const FieldCard: FC<FieldCardProps> = ({ field, onEdit, onDelete }) => {
         }}
       >
         <Chip
-          label={field.status}
+          label={displayStatus[field.status]}
           color={statusColors[field.status as keyof typeof statusColors] || 'default'}
           size="small"
           sx={{
@@ -62,21 +83,25 @@ export const FieldCard: FC<FieldCardProps> = ({ field, onEdit, onDelete }) => {
         />
       </Box>
 
-      {/* Field Info */}
       <Box sx={{ flexGrow: 1 }}>
         <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
           {field.name}
         </Typography>
 
         <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
-          <Chip label={field.size} size="small" variant="outlined" />
-          <Chip label={field.type} size="small" variant="outlined" sx={{ textTransform: 'capitalize' }} />
+          <Chip label={displaySize[field.size]} size="small" variant="outlined" />
+          <Chip
+            label={displayType[field.type]}
+            size="small"
+            variant="outlined"
+            sx={{ textTransform: 'capitalize' }}
+          />
         </Box>
 
         <Typography variant="h5" sx={{ color: 'primary.main', fontWeight: 700, mb: 1 }}>
-          ${field.pricePerHour}
+          {buildPriceString(field.pricePerHour)}
           <Typography component="span" variant="body2" sx={{ color: 'text.secondary', ml: 0.5 }}>
-            /hour
+            /Giờ
           </Typography>
         </Typography>
 
@@ -87,9 +112,8 @@ export const FieldCard: FC<FieldCardProps> = ({ field, onEdit, onDelete }) => {
         )}
       </Box>
 
-      {/* Actions */}
       <Box sx={{ display: 'flex', gap: 1, pt: 2, borderTop: '1px solid', borderColor: 'divider' }}>
-        <Tooltip title="Edit">
+        <Tooltip title="Chỉnh sửa thông tin sân">
           <IconButton
             onClick={() => onEdit(field)}
             sx={{
@@ -108,7 +132,7 @@ export const FieldCard: FC<FieldCardProps> = ({ field, onEdit, onDelete }) => {
           </IconButton>
         </Tooltip>
 
-        <Tooltip title="Delete">
+        <Tooltip title="Xóa sân bóng khỏi hệ thống">
           <IconButton
             onClick={() => onDelete(field.id)}
             sx={{

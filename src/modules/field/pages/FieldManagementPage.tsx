@@ -1,29 +1,18 @@
-import { fetchFields } from '@/api/field';
+import { createField, fetchFields } from '@/api/field';
+import { useToast } from '@/hooks';
 import { Add } from '@mui/icons-material';
-import {
-  Alert,
-  Box,
-  Button,
-  CircularProgress,
-  Container,
-  Snackbar,
-  Typography,
-} from '@mui/material';
+import { Box, Button, CircularProgress, Container, Typography } from '@mui/material';
 import { FC, useEffect, useState } from 'react';
 import { FieldCard } from '../components/FieldCard';
 import { FieldDialog } from '../components/FieldDialog';
 import { Field } from '../types';
 
 const FieldManagementPage: FC = () => {
+  const { showToast } = useToast();
   const [fields, setFields] = useState<Field[]>([]);
   const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedField, setSelectedField] = useState<Field | undefined>(undefined);
-  const [snackbar, setSnackbar] = useState({
-    open: false,
-    message: '',
-    severity: 'success' as 'success' | 'error',
-  });
 
   const fetchFieldsData = async () => {
     setLoading(true);
@@ -31,7 +20,7 @@ const FieldManagementPage: FC = () => {
       const response = await fetchFields();
       setFields(response as Field[]);
     } catch (error) {
-      showSnackbar('Failed to fetch fields', 'error');
+      showToast('Failed to fetch fields', 'error');
     } finally {
       setLoading(false);
     }
@@ -41,26 +30,27 @@ const FieldManagementPage: FC = () => {
     fetchFieldsData();
   }, []);
 
-  const showSnackbar = (message: string, severity: 'success' | 'error') => {
-    setSnackbar({ open: true, message, severity });
-  };
-
   const handleCreateField = async (values: Partial<Field>) => {
     try {
       if (selectedField?.id) {
         // Update field - API call would go here
         // await updateField(selectedField.id, values);
-        showSnackbar('Update functionality coming soon', 'error');
+        showToast('Chức năng cập nhật sẽ sớm ra mắt', 'error');
       } else {
-        // Create field - API call would go here
-        // await createField(values);
-        showSnackbar('Create functionality coming soon', 'error');
+        await createField({
+          name: values.name!,
+          pricePerHour: values.pricePerHour!,
+          size: values.size!,
+          type: values.type!,
+          images: values.images || [],
+        });
+        showToast('Tạo sân bóng thành công', 'success');
       }
       fetchFieldsData();
       setDialogOpen(false);
       setSelectedField(undefined);
     } catch (error) {
-      showSnackbar('Failed to save field', 'error');
+      showToast('Failed to save field', 'error');
     }
   };
 
@@ -74,10 +64,10 @@ const FieldManagementPage: FC = () => {
       try {
         // Note: Delete endpoint not implemented in API yet
         // await deleteField(id);
-        showSnackbar('Delete functionality coming soon', 'error');
+        showToast('Chức năng xóa sẽ sớm ra mắt', 'error');
         // fetchFieldsData();
       } catch (error) {
-        showSnackbar('Failed to delete field', 'error');
+        showToast('Failed to delete field', 'error');
       }
     }
   };
@@ -111,10 +101,7 @@ const FieldManagementPage: FC = () => {
                 mb: 1,
               }}
             >
-              Field Management
-            </Typography>
-            <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-              Manage your football fields with ease
+              Quản lý Sân Bóng
             </Typography>
           </Box>
 
@@ -134,7 +121,7 @@ const FieldManagementPage: FC = () => {
               },
             }}
           >
-            New Field
+            Thêm Sân Mới
           </Button>
         </Box>
 
@@ -154,10 +141,7 @@ const FieldManagementPage: FC = () => {
             }}
           >
             <Typography variant="h6" sx={{ color: 'text.secondary', mb: 2 }}>
-              No fields found
-            </Typography>
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              Create your first field to get started
+              Chưa có sân bóng nào được tạo. Vui lòng thêm sân mới.
             </Typography>
           </Box>
         ) : (
@@ -174,12 +158,7 @@ const FieldManagementPage: FC = () => {
             }}
           >
             {fields.map((field) => (
-              <FieldCard
-                key={field.id}
-                field={field}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-              />
+              <FieldCard key={field.id} field={field} onEdit={handleEdit} onDelete={handleDelete} />
             ))}
           </Box>
         )}
@@ -194,18 +173,6 @@ const FieldManagementPage: FC = () => {
           onSubmit={handleCreateField}
           field={selectedField}
         />
-
-        {/* Snackbar */}
-        <Snackbar
-          open={snackbar.open}
-          autoHideDuration={4000}
-          onClose={() => setSnackbar({ ...snackbar, open: false })}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        >
-          <Alert severity={snackbar.severity} variant="filled">
-            {snackbar.message}
-          </Alert>
-        </Snackbar>
       </Container>
     </Box>
   );
