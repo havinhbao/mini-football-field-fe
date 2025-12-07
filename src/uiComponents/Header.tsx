@@ -1,20 +1,7 @@
-import { AppContext, AppStyles } from '@/constants';
-import { isAuthenticated } from '@/middlewares';
+import { AppStyles } from '@/constants';
 import MenuIcon from '@mui/icons-material/Menu';
-import {
-  AppBar,
-  Avatar,
-  Box,
-  Button,
-  IconButton,
-  List,
-  ListItemButton,
-  ListItemText,
-  Popover,
-  Toolbar,
-  Typography,
-} from '@mui/material';
-import { FC, ReactNode, useState } from 'react';
+import { AppBar, Box, Button, IconButton, Toolbar, Typography } from '@mui/material';
+import { FC, ReactNode } from 'react';
 import { useNavigate } from 'react-router';
 
 type HeaderProps = {
@@ -24,16 +11,6 @@ type HeaderProps = {
 
 const Header: FC<HeaderProps> = ({ onSidebarToggle, component }) => {
   const navigate = useNavigate();
-
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
-  const handleAvatarClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => setAnchorEl(null);
-
-  const open = Boolean(anchorEl);
 
   return (
     <>
@@ -69,81 +46,8 @@ const Header: FC<HeaderProps> = ({ onSidebarToggle, component }) => {
           </Button>
 
           {component ? <Box sx={{ flexGrow: 1 }}>{component}</Box> : <Box sx={{ flexGrow: 1 }} />}
-
-          {/* Avatar */}
-          {isAuthenticated() ? (
-            <Avatar
-              src="https://i.pravatar.cc/100"
-              sx={{ width: 36, height: 36, cursor: 'pointer' }}
-              onClick={handleAvatarClick}
-            />
-          ) : (
-            <>
-              <Button
-                variant="contained"
-                sx={{ textTransform: 'none' }}
-                onClick={() => navigate('/login')}
-              >
-                {AppContext.login}
-              </Button>
-              <Button
-                variant="outlined"
-                sx={{ textTransform: 'none' }}
-                onClick={() => navigate('/register')}
-              >
-                {AppContext.register}
-              </Button>
-            </>
-          )}
         </Toolbar>
       </AppBar>
-
-      {/* Popover */}
-      <Popover
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
-        }}
-        transformOrigin={{
-          vertical: -5,
-          horizontal: 'right',
-        }}
-        slotProps={{
-          paper: {
-            sx: {
-              width: 180,
-              boxShadow: AppStyles.boxShadow,
-              p: 1,
-            },
-          },
-        }}
-      >
-        <List disablePadding>
-          <ListItemButton
-            sx={{ borderRadius: 1 }}
-            onClick={() => {
-              handleClose();
-              navigate('/profile');
-            }}
-          >
-            <ListItemText primary="Profile" />
-          </ListItemButton>
-
-          <ListItemButton
-            sx={{ borderRadius: 1, color: '#DC2626' }} // đỏ nhẹ cho logout
-            onClick={() => {
-              handleClose();
-              localStorage.clear();
-              navigate('/login', { replace: true });
-            }}
-          >
-            <ListItemText primary="Logout" />
-          </ListItemButton>
-        </List>
-      </Popover>
     </>
   );
 };
