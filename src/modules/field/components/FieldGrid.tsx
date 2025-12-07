@@ -30,7 +30,7 @@ export default function FieldGrid() {
 
   return (
     <Grid container spacing={3}>
-      {[...fields, ...fields].map((f, index) => (
+      {fields.map((f, index) => (
         <Grid size={3} key={`${f.id}-${index}`}>
           <Card
             sx={{
