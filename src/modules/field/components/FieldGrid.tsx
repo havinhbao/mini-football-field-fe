@@ -1,3 +1,4 @@
+import { Field } from '@/api/field';
 import { AppContext, FieldStatus, RoutePaths } from '@/constants';
 import { isAuthenticated } from '@/middlewares';
 import { getFields } from '@/modules/field/services';
@@ -6,7 +7,6 @@ import { EventAvailable } from '@mui/icons-material';
 import { Box, Button, Card, CardContent, CardMedia, Chip, Grid, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Field } from '@/api/field';
 
 export default function FieldGrid() {
   const [fields, setFields] = useState<Field[]>([]);
@@ -125,7 +125,7 @@ export default function FieldGrid() {
                   fontWeight: 600,
                 }}
               >
-                Book Now
+                Đặt ngay
               </Button>
             </CardContent>
           </Card>

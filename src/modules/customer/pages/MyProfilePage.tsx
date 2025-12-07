@@ -2,7 +2,17 @@ import { userApi } from '@/api/user';
 import { StorageKey } from '@/constants';
 import { useToast } from '@/hooks';
 import { Lock, Person } from '@mui/icons-material';
-import { Box, Button, CircularProgress, Container, Paper, Tab, Tabs, TextField, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Container,
+  Paper,
+  Tab,
+  Tabs,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { useFormik } from 'formik';
 import { jwtDecode } from 'jwt-decode';
 import { FC, useEffect, useState } from 'react';
@@ -103,9 +113,9 @@ const MyProfilePage: FC = () => {
   });
 
   return (
-    <Box sx={{ bgcolor: '#f5f7fa' }}>
+    <Box sx={{ bgcolor: '#f5f7fa', height: '100vh' }}>
       <CustomerNavBar />
-      
+
       <Box
         sx={{
           overflowY: 'auto',
@@ -123,10 +133,10 @@ const MyProfilePage: FC = () => {
               WebkitTextFillColor: 'transparent',
             }}
           >
-            My Profile
+            Hồ sơ của tôi
           </Typography>
           <Typography variant="body1" sx={{ color: 'text.secondary', mb: 4 }}>
-            Manage your account settings
+            Quản lý cài đặt tài khoản của bạn
           </Typography>
 
           <Paper sx={{ borderRadius: 2, overflow: 'hidden' }}>
@@ -135,8 +145,8 @@ const MyProfilePage: FC = () => {
               onChange={(_, newValue) => setActiveTab(newValue)}
               sx={{ borderBottom: 1, borderColor: 'divider', bgcolor: 'grey.50' }}
             >
-              <Tab icon={<Person />} iconPosition="start" label="Profile" />
-              <Tab icon={<Lock />} iconPosition="start" label="Security" />
+              <Tab icon={<Person />} iconPosition="start" label="Hồ sơ" />
+              <Tab icon={<Lock />} iconPosition="start" label="Bảo mật" />
             </Tabs>
 
             <Box sx={{ p: 4 }}>
@@ -146,7 +156,7 @@ const MyProfilePage: FC = () => {
                     fullWidth
                     id="username"
                     name="username"
-                    label="Full Name"
+                    label="Họ và tên"
                     value={profileFormik.values.username}
                     onChange={profileFormik.handleChange}
                     error={profileFormik.touched.username && Boolean(profileFormik.errors.username)}
@@ -158,11 +168,15 @@ const MyProfilePage: FC = () => {
                     fullWidth
                     id="phoneNumber"
                     name="phoneNumber"
-                    label="Phone Number"
+                    label="Số điện thoại"
                     value={profileFormik.values.phoneNumber}
                     onChange={profileFormik.handleChange}
-                    error={profileFormik.touched.phoneNumber && Boolean(profileFormik.errors.phoneNumber)}
-                    helperText={profileFormik.touched.phoneNumber && profileFormik.errors.phoneNumber}
+                    error={
+                      profileFormik.touched.phoneNumber && Boolean(profileFormik.errors.phoneNumber)
+                    }
+                    helperText={
+                      profileFormik.touched.phoneNumber && profileFormik.errors.phoneNumber
+                    }
                     sx={{ mb: 3 }}
                   />
 
@@ -172,7 +186,7 @@ const MyProfilePage: FC = () => {
                     disabled={loading}
                     startIcon={loading ? <CircularProgress size={20} /> : null}
                   >
-                    Save Changes
+                    Lưu thay đổi
                   </Button>
                 </Box>
               )}
@@ -183,12 +197,17 @@ const MyProfilePage: FC = () => {
                     fullWidth
                     id="oldPassword"
                     name="oldPassword"
-                    label="Current Password"
+                    label="Mật khẩu hiện tại"
                     type="password"
                     value={passwordFormik.values.oldPassword}
                     onChange={passwordFormik.handleChange}
-                    error={passwordFormik.touched.oldPassword && Boolean(passwordFormik.errors.oldPassword)}
-                    helperText={passwordFormik.touched.oldPassword && passwordFormik.errors.oldPassword}
+                    error={
+                      passwordFormik.touched.oldPassword &&
+                      Boolean(passwordFormik.errors.oldPassword)
+                    }
+                    helperText={
+                      passwordFormik.touched.oldPassword && passwordFormik.errors.oldPassword
+                    }
                     sx={{ mb: 3 }}
                   />
 
@@ -196,12 +215,17 @@ const MyProfilePage: FC = () => {
                     fullWidth
                     id="newPassword"
                     name="newPassword"
-                    label="New Password"
+                    label="Mật khẩu mới"
                     type="password"
                     value={passwordFormik.values.newPassword}
                     onChange={passwordFormik.handleChange}
-                    error={passwordFormik.touched.newPassword && Boolean(passwordFormik.errors.newPassword)}
-                    helperText={passwordFormik.touched.newPassword && passwordFormik.errors.newPassword}
+                    error={
+                      passwordFormik.touched.newPassword &&
+                      Boolean(passwordFormik.errors.newPassword)
+                    }
+                    helperText={
+                      passwordFormik.touched.newPassword && passwordFormik.errors.newPassword
+                    }
                     sx={{ mb: 3 }}
                   />
 
@@ -209,12 +233,18 @@ const MyProfilePage: FC = () => {
                     fullWidth
                     id="confirmPassword"
                     name="confirmPassword"
-                    label="Confirm New Password"
+                    label="Xác nhận mật khẩu mới"
                     type="password"
                     value={passwordFormik.values.confirmPassword}
                     onChange={passwordFormik.handleChange}
-                    error={passwordFormik.touched.confirmPassword && Boolean(passwordFormik.errors.confirmPassword)}
-                    helperText={passwordFormik.touched.confirmPassword && passwordFormik.errors.confirmPassword}
+                    error={
+                      passwordFormik.touched.confirmPassword &&
+                      Boolean(passwordFormik.errors.confirmPassword)
+                    }
+                    helperText={
+                      passwordFormik.touched.confirmPassword &&
+                      passwordFormik.errors.confirmPassword
+                    }
                     sx={{ mb: 3 }}
                   />
 
@@ -224,7 +254,7 @@ const MyProfilePage: FC = () => {
                     disabled={loading}
                     startIcon={loading ? <CircularProgress size={20} /> : null}
                   >
-                    Change Password
+                    Đổi mật khẩu
                   </Button>
                 </Box>
               )}

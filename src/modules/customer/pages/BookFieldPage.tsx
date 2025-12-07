@@ -28,7 +28,6 @@ const BookFieldPage: FC = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
 
-  // Filter states
   const [nameFilter, setNameFilter] = useState('');
   const [sizeFilter, setSizeFilter] = useState<FieldSize | ''>('');
   const [statusFilter, setStatusFilter] = useState<FieldStatus | ''>('');
@@ -70,13 +69,12 @@ const BookFieldPage: FC = () => {
     setLoading(true);
     try {
       const schedule = await getDailySchedule(selectedFieldId, selectedDate);
-      // Generate available time slots
+
       const slots: string[] = [];
       for (let hour = 6; hour <= 22; hour++) {
         const timeStr = `${hour.toString().padStart(2, '0')}:00`;
         const endTimeStr = `${(hour + 1).toString().padStart(2, '0')}:00`;
 
-        // Check if slot is available
         const isBooked = schedule.some((booking: any) => {
           return (
             booking.startTime === timeStr ||
@@ -105,7 +103,6 @@ const BookFieldPage: FC = () => {
     const [startTime, endTime] = selectedSlot.split(' - ');
 
     if (paymentMethod === 'vnpay') {
-      // Navigate to VNPay payment page with booking details
       const bookingData = {
         fieldId: selectedFieldId,
         date: selectedDate,
@@ -118,7 +115,6 @@ const BookFieldPage: FC = () => {
       return;
     }
 
-    // Cash payment - create booking directly
     setSubmitting(true);
     try {
       await createBooking({
@@ -139,7 +135,7 @@ const BookFieldPage: FC = () => {
   const selectedField = fields.find((f) => f.id === selectedFieldId);
 
   return (
-    <Box sx={{ bgcolor: '#f5f7fa' }}>
+    <Box sx={{ bgcolor: '#f5f7fa', height: '100vh' }}>
       <CustomerNavBar />
 
       <Box
@@ -159,50 +155,50 @@ const BookFieldPage: FC = () => {
               WebkitTextFillColor: 'transparent',
             }}
           >
-            Book a Field
+            Đặt sân bóng
           </Typography>
           <Typography variant="body1" sx={{ color: 'text.secondary', mb: 4 }}>
-            Select your preferred date, time, and payment method
+            Chọn ngày, giờ và phương thức thanh toán bạn muốn
           </Typography>
 
           <Card sx={{ borderRadius: 2, boxShadow: 2, mb: 3 }}>
             <CardContent sx={{ p: 4 }}>
               {/* Search Filters */}
-              <Box sx={{ mb: 3, p: 2, bgcolor: 'grey.50', borderRadius: 2 }}>
+              <Box sx={{ mb: 3, bgcolor: 'grey.50', borderRadius: 2 }}>
                 <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600 }}>
-                  Search Filters
+                  Bộ lọc tìm kiếm
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
                   <TextField
                     size="small"
-                    label="Field Name"
+                    label="Tên sân"
                     value={nameFilter}
                     onChange={(e) => setNameFilter(e.target.value)}
-                    placeholder="Search by name..."
+                    placeholder="Tìm theo tên..."
                     sx={{ flex: '1 1 200px' }}
                   />
                   <FormControl size="small" sx={{ flex: '1 1 150px' }}>
-                    <InputLabel>Size</InputLabel>
+                    <InputLabel>Kích thước</InputLabel>
                     <Select
                       value={sizeFilter}
                       onChange={(e) => setSizeFilter(e.target.value as FieldSize | '')}
-                      label="Size"
+                      label="Kích thước"
                     >
-                      <MenuItem value="">All Sizes</MenuItem>
-                      <MenuItem value={FieldSize.FIVE_SIDE}>Small (5v5)</MenuItem>
-                      <MenuItem value={FieldSize.SEVEN_SIDE}>Medium (7v7)</MenuItem>
+                      <MenuItem value="">Tất cả kích thước</MenuItem>
+                      <MenuItem value={FieldSize.FIVE_SIDE}>Sân 5 (5v5)</MenuItem>
+                      <MenuItem value={FieldSize.SEVEN_SIDE}>Sân 7 (7v7)</MenuItem>
                     </Select>
                   </FormControl>
                   <FormControl size="small" sx={{ flex: '1 1 150px' }}>
-                    <InputLabel>Status</InputLabel>
+                    <InputLabel>Trạng thái</InputLabel>
                     <Select
                       value={statusFilter}
                       onChange={(e) => setStatusFilter(e.target.value as FieldStatus | '')}
-                      label="Status"
+                      label="Trạng thái"
                     >
-                      <MenuItem value="">All Status</MenuItem>
-                      <MenuItem value={FieldStatus.AVAILABLE}>Available</MenuItem>
-                      <MenuItem value={FieldStatus.MAINTENANCE}>Maintenance</MenuItem>
+                      <MenuItem value="">Tất cả trạng thái</MenuItem>
+                      <MenuItem value={FieldStatus.AVAILABLE}>Có sẵn</MenuItem>
+                      <MenuItem value={FieldStatus.MAINTENANCE}>Bảo trì</MenuItem>
                     </Select>
                   </FormControl>
                 </Box>
@@ -211,21 +207,21 @@ const BookFieldPage: FC = () => {
                     {nameFilter && (
                       <Chip
                         size="small"
-                        label={`Name: ${nameFilter}`}
+                        label={`Tên sân: ${nameFilter}`}
                         onDelete={() => setNameFilter('')}
                       />
                     )}
                     {sizeFilter && (
                       <Chip
                         size="small"
-                        label={`Size: ${sizeFilter}`}
+                        label={`Kích thước: ${sizeFilter}`}
                         onDelete={() => setSizeFilter('')}
                       />
                     )}
                     {statusFilter && (
                       <Chip
                         size="small"
-                        label={`Status: ${statusFilter}`}
+                        label={`Trạng thái: ${statusFilter}`}
                         onDelete={() => setStatusFilter('')}
                       />
                     )}
@@ -234,11 +230,11 @@ const BookFieldPage: FC = () => {
               </Box>
 
               <FormControl fullWidth sx={{ mb: 3 }}>
-                <InputLabel>Select Field</InputLabel>
+                <InputLabel>Chọn sân</InputLabel>
                 <Select
                   value={selectedFieldId}
                   onChange={(e) => setSelectedFieldId(e.target.value)}
-                  label="Select Field"
+                  label="Chọn sân"
                 >
                   {fields.map((field) => (
                     <MenuItem key={field.id} value={field.id}>
@@ -254,20 +250,15 @@ const BookFieldPage: FC = () => {
                     {selectedField.name}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Type: {selectedField.type} | Size: {selectedField.size}
+                    Loại: {selectedField.type} | Kích thước: {selectedField.size}
                   </Typography>
-                  {selectedField.location && (
-                    <Typography variant="body2" color="text.secondary">
-                      Location: {selectedField.location}
-                    </Typography>
-                  )}
                 </Box>
               )}
 
               <TextField
                 fullWidth
                 type="date"
-                label="Select Date"
+                label="Chọn ngày"
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
                 slotProps={{
@@ -287,11 +278,11 @@ const BookFieldPage: FC = () => {
               ) : timeSlots.length > 0 ? (
                 <>
                   <FormControl fullWidth sx={{ mb: 3 }}>
-                    <InputLabel>Select Time Slot</InputLabel>
+                    <InputLabel>Chọn khung giờ</InputLabel>
                     <Select
                       value={selectedSlot}
                       onChange={(e) => setSelectedSlot(e.target.value)}
-                      label="Select Time Slot"
+                      label="Chọn khung giờ"
                     >
                       {timeSlots.map((slot) => (
                         <MenuItem key={slot} value={slot}>
@@ -302,11 +293,11 @@ const BookFieldPage: FC = () => {
                   </FormControl>
 
                   <FormControl fullWidth sx={{ mb: 3 }}>
-                    <InputLabel>Payment Method</InputLabel>
+                    <InputLabel>Phương thức thanh toán</InputLabel>
                     <Select
                       value={paymentMethod}
                       onChange={(e) => setPaymentMethod(e.target.value as 'cash' | 'vnpay')}
-                      label="Payment Method"
+                      label="Phương thức thanh toán"
                     >
                       <MenuItem value="cash">Tiền mặt (Cash)</MenuItem>
                       <MenuItem value="vnpay">VNPay</MenuItem>
@@ -324,12 +315,12 @@ const BookFieldPage: FC = () => {
                       }}
                     >
                       <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                        Total: {selectedField.pricePerHour?.toLocaleString()} VND
+                        Tổng tiền: {selectedField.pricePerHour?.toLocaleString()} VND
                       </Typography>
                       <Typography variant="caption" sx={{ display: 'block', mt: 0.5 }}>
                         {paymentMethod === 'cash'
-                          ? 'Payment will be confirmed by admin after booking'
-                          : 'You will be redirected to VNPay for payment'}
+                          ? 'Thanh toán sẽ được thực hiện tại sân'
+                          : 'Bạn sẽ được chuyển hướng đến VNPay để thanh toán'}
                       </Typography>
                     </Box>
                   )}
@@ -342,14 +333,14 @@ const BookFieldPage: FC = () => {
                     color="text.secondary"
                     sx={{ textAlign: 'center', py: 2 }}
                   >
-                    No available time slots for this date. Please select another date.
+                    Không có khung giờ trống cho ngày này. Vui lòng chọn ngày khác.
                   </Typography>
                 )
               )}
 
               <Box sx={{ display: 'flex', gap: 2 }}>
                 <Button variant="outlined" fullWidth onClick={() => navigate('/')}>
-                  Cancel
+                  Hủy
                 </Button>
                 <Button
                   variant="contained"
@@ -359,10 +350,10 @@ const BookFieldPage: FC = () => {
                   startIcon={submitting ? <CircularProgress size={20} /> : null}
                 >
                   {submitting
-                    ? 'Booking...'
+                    ? 'Đang đặt...'
                     : paymentMethod === 'vnpay'
-                    ? 'Proceed to Payment'
-                    : 'Confirm Booking'}
+                    ? 'Tiến hành thanh toán'
+                    : 'Xác nhận đặt sân'}
                 </Button>
               </Box>
             </CardContent>

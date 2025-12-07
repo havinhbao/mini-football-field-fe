@@ -15,9 +15,9 @@ export const CustomerNavBar: FC = () => {
   };
 
   const navItems = [
-    { label: 'Fields', path: '/', icon: <SportsSoccer /> },
-    { label: 'My Bookings', path: RoutePaths.MY_BOOKINGS, icon: <CalendarMonth /> },
-    { label: 'Profile', path: RoutePaths.MY_PROFILE, icon: <Person /> },
+    { label: 'Sân bóng', path: '/', icon: <SportsSoccer /> },
+    { label: 'Đặt sân', path: RoutePaths.MY_BOOKINGS, icon: <CalendarMonth /> },
+    { label: 'Hồ sơ', path: RoutePaths.MY_PROFILE, icon: <Person /> },
   ];
 
   return (
@@ -42,7 +42,7 @@ export const CustomerNavBar: FC = () => {
             }}
           >
             <SportsSoccer sx={{ fontSize: 32 }} />
-            MiniBall
+            Mini Ball
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: 'flex', gap: 1 }}>
@@ -56,7 +56,8 @@ export const CustomerNavBar: FC = () => {
                   textTransform: 'none',
                   px: 2,
                   borderRadius: 2,
-                  bgcolor: location.pathname === item.path ? 'rgba(255,255,255,0.2)' : 'transparent',
+                  bgcolor:
+                    location.pathname === item.path ? 'rgba(255,255,255,0.2)' : 'transparent',
                   '&:hover': {
                     bgcolor: 'rgba(255,255,255,0.15)',
                   },
@@ -81,7 +82,7 @@ export const CustomerNavBar: FC = () => {
               },
             }}
           >
-            Logout
+            Đăng xuất
           </Button>
         </Toolbar>
       </Container>

@@ -1,6 +1,6 @@
 import { cancelBooking } from '@/api/booking';
 import { useToast } from '@/hooks';
-import { CalendarToday, Cancel, Place, Schedule } from '@mui/icons-material';
+import { CalendarToday, Cancel, Schedule } from '@mui/icons-material';
 import { Box, Button, Card, CardContent, Chip, Typography } from '@mui/material';
 import { format } from 'date-fns';
 import { FC, useState } from 'react';
@@ -27,15 +27,15 @@ export const BookingCard: FC<BookingCardProps> = ({ booking, onUpdate }) => {
   const [loading, setLoading] = useState(false);
 
   const handleCancel = async () => {
-    if (!window.confirm('Are you sure you want to cancel this booking?')) return;
-    
+    if (!window.confirm('Bạn có chắc chắn muốn hủy đặt sân này không?')) return;
+
     setLoading(true);
     try {
       await cancelBooking(booking.id, 'Canceled by customer', false);
-      showToast('Booking canceled successfully', 'success');
+      showToast('Hủy đặt sân thành công', 'success');
       onUpdate?.();
     } catch (error) {
-      showToast('Failed to cancel booking', 'error');
+      showToast('Không thể hủy đặt sân', 'error');
     } finally {
       setLoading(false);
     }
@@ -82,15 +82,6 @@ export const BookingCard: FC<BookingCardProps> = ({ booking, onUpdate }) => {
         </Box>
 
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 2 }}>
-          {booking.field?.location && (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Place sx={{ fontSize: 18, color: 'text.secondary' }} />
-              <Typography variant="body2" color="text.secondary">
-                {booking.field.location}
-              </Typography>
-            </Box>
-          )}
-          
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <CalendarToday sx={{ fontSize: 18, color: 'text.secondary' }} />
             <Typography variant="body2" color="text.secondary">
@@ -120,7 +111,7 @@ export const BookingCard: FC<BookingCardProps> = ({ booking, onUpdate }) => {
               onClick={handleCancel}
               disabled={loading}
             >
-              Cancel
+              Hủy đặt sân
             </Button>
           )}
         </Box>

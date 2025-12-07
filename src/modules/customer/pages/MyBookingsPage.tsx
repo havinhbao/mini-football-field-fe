@@ -1,10 +1,12 @@
 import { getMyBookings } from '@/api/booking';
-import { Box, CircularProgress, Container, Typography } from '@mui/material';
+import { Box, Button, CircularProgress, Container, Typography } from '@mui/material';
 import { FC, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
 import { BookingCard } from '../components/BookingCard';
 import { CustomerNavBar } from '../components/CustomerNavBar';
 
 const MyBookingsPage: FC = () => {
+  const navigate = useNavigate();
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -25,9 +27,9 @@ const MyBookingsPage: FC = () => {
   }, []);
 
   return (
-    <Box sx={{ bgcolor: '#f5f7fa' }}>
+    <Box sx={{ bgcolor: '#f5f7fa', height: '100vh' }}>
       <CustomerNavBar />
-      
+
       <Box
         sx={{
           overflowY: 'auto',
@@ -45,10 +47,7 @@ const MyBookingsPage: FC = () => {
               WebkitTextFillColor: 'transparent',
             }}
           >
-            My Bookings
-          </Typography>
-          <Typography variant="body1" sx={{ color: 'text.secondary', mb: 4 }}>
-            View and manage your field bookings
+            Lịch đặt sân của tôi
           </Typography>
 
           {loading ? (
@@ -66,14 +65,25 @@ const MyBookingsPage: FC = () => {
               }}
             >
               <Typography variant="h6" color="text.secondary">
-                No bookings yet
+                Chưa có đặt sân nào
               </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                Start by browsing available fields
-              </Typography>
+
+              <Button
+                variant="contained"
+                sx={{ mt: 3, bgcolor: 'primary.main' }}
+                onClick={() => navigate('/')}
+              >
+                Duyệt sân
+              </Button>
             </Box>
           ) : (
-            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' }, gap: 3 }}>
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' },
+                gap: 3,
+              }}
+            >
               {bookings.map((booking) => (
                 <BookingCard key={booking.id} booking={booking} onUpdate={fetchBookings} />
               ))}
