@@ -214,14 +214,16 @@ const BookingManagementPage: FC = () => {
   return (
     <Box
       sx={{
-        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
         background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-        py: 4,
+        pt: 2,
       }}
     >
       <Container maxWidth="xl">
         {/* Header */}
-        <Box sx={{ mb: 4 }}>
+        <Box sx={{ mb: 2 }}>
           <Typography
             variant="h3"
             sx={{

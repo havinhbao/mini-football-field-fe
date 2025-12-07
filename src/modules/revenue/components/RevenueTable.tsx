@@ -1,5 +1,14 @@
 import { RevenueData } from '@/api/revenue';
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import {
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from '@mui/material';
 import { FC } from 'react';
 
 interface RevenueTableProps {
@@ -9,11 +18,11 @@ interface RevenueTableProps {
 
 export const RevenueTable: FC<RevenueTableProps> = ({ data, loading }) => {
   if (loading) {
-    return <Typography>Loading data...</Typography>;
+    return <Typography>Đang tải dữ liệu...</Typography>;
   }
 
   if (!data.length) {
-    return <Typography>No data available for this period.</Typography>;
+    return <Typography>Không có dữ liệu cho khoảng thời gian này.</Typography>;
   }
 
   return (
@@ -21,9 +30,9 @@ export const RevenueTable: FC<RevenueTableProps> = ({ data, loading }) => {
       <Table>
         <TableHead sx={{ bgcolor: 'grey.100' }}>
           <TableRow>
-            <TableCell sx={{ fontWeight: 600 }}>Date</TableCell>
+            <TableCell sx={{ fontWeight: 600 }}>Ngày</TableCell>
             <TableCell align="right" sx={{ fontWeight: 600 }}>
-              Revenue (VND)
+              Doanh thu (VND)
             </TableCell>
           </TableRow>
         </TableHead>

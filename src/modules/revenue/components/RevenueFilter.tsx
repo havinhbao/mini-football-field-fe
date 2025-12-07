@@ -1,7 +1,18 @@
 import { RevenuePeriod } from '@/api/revenue';
+import { capitalizeFirstLetter } from '@/utils';
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import { Box, Button, FormControl, IconButton, MenuItem, Select, Typography } from '@mui/material';
-import { addDays, addMonths, addYears, format, startOfWeek, subDays, subMonths, subYears } from 'date-fns';
+import {
+  addDays,
+  addMonths,
+  addYears,
+  format,
+  startOfWeek,
+  subDays,
+  subMonths,
+  subYears,
+} from 'date-fns';
+import { vi } from 'date-fns/locale';
 import { FC } from 'react';
 
 interface RevenueFilterProps {
@@ -45,11 +56,13 @@ export const RevenueFilter: FC<RevenueFilterProps> = ({
     if (period === 'week') {
       const start = startOfWeek(date, { weekStartsOn: 1 });
       const end = addDays(start, 6);
-      return `${format(start, 'dd/MM/yyyy')} - ${format(end, 'dd/MM/yyyy')}`;
+      return `${format(start, 'dd/MM/yyyy', { locale: vi })} - ${format(end, 'dd/MM/yyyy', {
+        locale: vi,
+      })}`;
     } else if (period === 'month') {
-      return format(date, 'MMMM yyyy');
+      return capitalizeFirstLetter(format(date, 'MMMM yyyy', { locale: vi }));
     } else {
-      return format(date, 'yyyy');
+      return format(date, 'yyyy', { locale: vi });
     }
   };
 
@@ -72,13 +85,21 @@ export const RevenueFilter: FC<RevenueFilterProps> = ({
           onChange={(e) => onPeriodChange(e.target.value as RevenuePeriod)}
           displayEmpty
         >
-          <MenuItem value="week">Weekly</MenuItem>
-          <MenuItem value="month">Monthly</MenuItem>
-          <MenuItem value="year">Yearly</MenuItem>
+          <MenuItem value="week">Tuần</MenuItem>
+          <MenuItem value="month">Tháng</MenuItem>
+          <MenuItem value="year">Năm</MenuItem>
         </Select>
       </FormControl>
 
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexGrow: 1, justifyContent: 'center' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1,
+          flexGrow: 1,
+          justifyContent: 'center',
+        }}
+      >
         <IconButton onClick={handlePrev}>
           <ArrowBack />
         </IconButton>
@@ -91,7 +112,7 @@ export const RevenueFilter: FC<RevenueFilterProps> = ({
       </Box>
 
       <Button variant="outlined" onClick={handleToday}>
-        Today
+        Hôm nay
       </Button>
     </Box>
   );

@@ -1,10 +1,5 @@
 import { getBookingStats } from '@/api/booking';
-import {
-  AttachMoney,
-  EventAvailable,
-  GroupAdd,
-  SportsSoccer,
-} from '@mui/icons-material';
+import { AttachMoney, EventAvailable, GroupAdd, SportsSoccer } from '@mui/icons-material';
 import {
   Box,
   Card,
@@ -37,7 +32,6 @@ const OverviewPage: FC = () => {
     const fetchStats = async () => {
       try {
         const data = await getBookingStats({});
-        // Map API response to dashboard stats
         setStats({
           activeFields: 12, // Mocked
           todayBookings: data.total || 0,
@@ -56,7 +50,9 @@ const OverviewPage: FC = () => {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Box
+        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}
+      >
         <CircularProgress />
       </Box>
     );
@@ -65,7 +61,7 @@ const OverviewPage: FC = () => {
   return (
     <Box
       sx={{
-        minHeight: '100vh',
+        height: '100%',
         background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
         py: 4,
       }}
@@ -81,14 +77,13 @@ const OverviewPage: FC = () => {
             mb: 4,
           }}
         >
-          Dashboard Overview
+          Tổng quan
         </Typography>
 
         <Grid container spacing={3}>
-          {/* Active Fields */}
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <StatsCard
-              title="Active Fields"
+              title="Sân hoạt động"
               value={stats.activeFields}
               icon={<SportsSoccer />}
               color="#4CAF50"
@@ -98,7 +93,7 @@ const OverviewPage: FC = () => {
           {/* Today's Bookings */}
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <StatsCard
-              title="Total Bookings"
+              title="Đặt sân hôm nay"
               value={stats.todayBookings}
               icon={<EventAvailable />}
               color="#2196F3"
@@ -109,8 +104,10 @@ const OverviewPage: FC = () => {
           {/* Today's Revenue */}
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <StatsCard
-              title="Total Revenue"
-              value={new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(stats.todayRevenue)}
+              title="Doanh thu hôm nay"
+              value={new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(
+                stats.todayRevenue,
+              )}
               icon={<AttachMoney />}
               color="#FF9800"
               trend={{ value: 8, label: 'vs yesterday' }}
@@ -120,7 +117,7 @@ const OverviewPage: FC = () => {
           {/* New Customers */}
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <StatsCard
-              title="New Customers"
+              title="Khách hàng mới"
               value={stats.newCustomers}
               icon={<GroupAdd />}
               color="#9C27B0"
@@ -158,7 +155,7 @@ const OverviewPage: FC = () => {
             <Card sx={{ borderRadius: 3, height: 400, boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
               <CardContent>
                 <Typography variant="h6" fontWeight={600} mb={2}>
-                  Recent Activity
+                  Hoạt động gần đây
                 </Typography>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                   {[1, 2, 3, 4].map((i) => (
@@ -174,10 +171,10 @@ const OverviewPage: FC = () => {
                       />
                       <Box>
                         <Typography variant="body2" fontWeight={600}>
-                          New booking confirmed
+                          Người dùng {i} đã đặt sân thành công
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
-                          2 minutes ago
+                          2 phút trước
                         </Typography>
                       </Box>
                     </Box>

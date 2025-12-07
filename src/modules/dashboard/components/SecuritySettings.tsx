@@ -15,22 +15,22 @@ export const SecuritySettings: FC = () => {
       confirmPassword: '',
     },
     validationSchema: Yup.object({
-      oldPassword: Yup.string().required('Current password is required'),
+      oldPassword: Yup.string().required('Vui lòng nhập mật khẩu hiện tại'),
       newPassword: Yup.string()
-        .min(6, 'Password must be at least 6 characters')
-        .required('New password is required'),
+        .min(6, 'Mật khẩu mới phải có ít nhất 6 ký tự')
+        .required('Vui lòng nhập mật khẩu mới'),
       confirmPassword: Yup.string()
-        .oneOf([Yup.ref('newPassword')], 'Passwords must match')
-        .required('Confirm password is required'),
+        .oneOf([Yup.ref('newPassword')], 'Mật khẩu xác nhận không khớp')
+        .required('Vui lòng xác nhận mật khẩu mới'),
     }),
     onSubmit: async (values, { resetForm }) => {
       setLoading(true);
       try {
         // await changePassword(values.oldPassword, values.newPassword);
-        showToast('Feature not available', 'error');
+        showToast('Tính năng chưa khả dụng', 'error');
         resetForm();
       } catch (error) {
-        showToast('Failed to change password', 'error');
+        showToast('Đổi mật khẩu thất bại', 'error');
       } finally {
         setLoading(false);
       }
@@ -40,14 +40,14 @@ export const SecuritySettings: FC = () => {
   return (
     <Box component="form" onSubmit={formik.handleSubmit} sx={{ maxWidth: 600 }}>
       <Typography variant="h6" sx={{ mb: 3 }}>
-        Change Password
+        Đổi mật khẩu
       </Typography>
 
       <TextField
         fullWidth
         id="oldPassword"
         name="oldPassword"
-        label="Current Password"
+        label="Mật khẩu hiện tại"
         type="password"
         value={formik.values.oldPassword}
         onChange={formik.handleChange}
@@ -60,7 +60,7 @@ export const SecuritySettings: FC = () => {
         fullWidth
         id="newPassword"
         name="newPassword"
-        label="New Password"
+        label="Mật khẩu mới"
         type="password"
         value={formik.values.newPassword}
         onChange={formik.handleChange}
@@ -73,7 +73,7 @@ export const SecuritySettings: FC = () => {
         fullWidth
         id="confirmPassword"
         name="confirmPassword"
-        label="Confirm New Password"
+        label="Xác nhận mật khẩu mới"
         type="password"
         value={formik.values.confirmPassword}
         onChange={formik.handleChange}
@@ -89,7 +89,7 @@ export const SecuritySettings: FC = () => {
         disabled={loading}
         startIcon={loading ? <CircularProgress size={20} /> : null}
       >
-        Change Password
+        Đổi mật khẩu
       </Button>
     </Box>
   );

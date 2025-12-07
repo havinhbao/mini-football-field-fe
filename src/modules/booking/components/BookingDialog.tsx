@@ -130,7 +130,12 @@ export const BookingDialog: FC<BookingDialogProps> = ({
             >
               {fields.map((field) => (
                 <MenuItem key={field.id} value={field.id}>
-                  {field.name} - ${field.pricePerHour}/hour
+                  {field.name} -{' '}
+                  {field.pricePerHour.toLocaleString('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND',
+                  })}
+                  /giờ
                 </MenuItem>
               ))}
             </TextField>

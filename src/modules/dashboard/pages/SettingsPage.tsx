@@ -18,9 +18,7 @@ const SettingsPage: FC = () => {
     if (token) {
       try {
         const decoded: any = jwtDecode(token);
-        // Assuming the token payload has 'id' or 'sub' or similar.
-        // Based on typical JWT, it might be 'sub' or 'id'.
-        // Let's assume 'id' based on UserDto.
+
         if (decoded.id) {
           setUserId(decoded.id);
         } else if (decoded.sub) {
@@ -58,19 +56,11 @@ const SettingsPage: FC = () => {
                 mb: 1,
               }}
             >
-              Settings
-            </Typography>
-            <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-              Manage your profile and security preferences
+              Cài đặt tài khoản
             </Typography>
           </Box>
-          <Button
-            variant="outlined"
-            color="error"
-            startIcon={<Logout />}
-            onClick={handleLogout}
-          >
-            Logout
+          <Button variant="outlined" color="error" startIcon={<Logout />} onClick={handleLogout}>
+            Đăng xuất
           </Button>
         </Box>
 
@@ -80,8 +70,8 @@ const SettingsPage: FC = () => {
             onChange={(_, newValue) => setActiveTab(newValue)}
             sx={{ borderBottom: 1, borderColor: 'divider', bgcolor: 'grey.50' }}
           >
-            <Tab label="Profile" />
-            <Tab label="Security" />
+            <Tab label="Hồ sơ" />
+            <Tab label="Bảo mật" />
           </Tabs>
 
           <Box sx={{ p: 4 }}>

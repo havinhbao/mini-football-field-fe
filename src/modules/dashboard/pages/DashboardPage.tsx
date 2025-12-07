@@ -19,7 +19,6 @@ const DashboardPage: FC = () => {
           sx={{
             flexGrow: 1,
             overflow: 'auto',
-            p: 3,
             bgcolor: '#F3F4F6',
           }}
         >

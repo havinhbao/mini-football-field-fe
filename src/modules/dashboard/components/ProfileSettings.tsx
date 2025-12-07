@@ -1,9 +1,9 @@
 import { userApi } from '@/api/user';
+import { useToast } from '@/hooks';
 import { Box, Button, CircularProgress, TextField, Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import { FC, useEffect, useState } from 'react';
 import * as Yup from 'yup';
-import { useToast } from '@/hooks';
 
 interface ProfileSettingsProps {
   userId: string;
@@ -39,12 +39,12 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ userId }) => {
     enableReinitialize: true,
     initialValues,
     validationSchema: Yup.object({
-      username: Yup.string().required('Full name is required'),
+      username: Yup.string().required('Tên đầy đủ là bắt buộc'),
       phoneNumber: Yup.string()
-        .matches(/^[0-9]+$/, 'Must be only digits')
-        .min(10, 'Must be exactly 10 digits')
-        .max(10, 'Must be exactly 10 digits')
-        .required('Phone number is required'),
+        .matches(/^[0-9]+$/, 'Chỉ được nhập số')
+        .min(10, 'Phải đúng 10 chữ số')
+        .max(10, 'Phải đúng 10 chữ số')
+        .required('Số điện thoại là bắt buộc'),
     }),
     onSubmit: async (values) => {
       setLoading(true);
@@ -54,9 +54,9 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ userId }) => {
           username: values.username,
           phoneNumber: values.phoneNumber,
         });
-        showToast('Profile updated successfully', 'success');
+        showToast('Cập nhật hồ sơ thành công', 'success');
       } catch (error) {
-        showToast('Failed to update profile', 'error');
+        showToast('Cập nhật hồ sơ thất bại', 'error');
       } finally {
         setLoading(false);
       }
@@ -66,14 +66,14 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ userId }) => {
   return (
     <Box component="form" onSubmit={formik.handleSubmit} sx={{ maxWidth: 600 }}>
       <Typography variant="h6" sx={{ mb: 3 }}>
-        Profile Information
+        Thông tin hồ sơ
       </Typography>
 
       <TextField
         fullWidth
         id="username"
         name="username"
-        label="Full Name"
+        label="Tên đầy đủ"
         value={formik.values.username}
         onChange={formik.handleChange}
         error={formik.touched.username && Boolean(formik.errors.username)}
@@ -85,7 +85,7 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ userId }) => {
         fullWidth
         id="phoneNumber"
         name="phoneNumber"
-        label="Phone Number"
+        label="Số điện thoại"
         value={formik.values.phoneNumber}
         onChange={formik.handleChange}
         error={formik.touched.phoneNumber && Boolean(formik.errors.phoneNumber)}
@@ -100,7 +100,7 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ userId }) => {
         disabled={loading}
         startIcon={loading ? <CircularProgress size={20} /> : null}
       >
-        Save Changes
+        Lưu thay đổi
       </Button>
     </Box>
   );

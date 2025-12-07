@@ -32,10 +32,10 @@ export const RevenueSummary: FC<RevenueSummaryProps> = ({ totalRevenue, loading 
         </Box>
         <Box>
           <Typography variant="h6" sx={{ opacity: 0.9, fontWeight: 500 }}>
-            Total Revenue
+            Tổng doanh thu
           </Typography>
           <Typography variant="h3" sx={{ fontWeight: 700 }}>
-            {loading ? 'Loading...' : `${totalRevenue.toLocaleString()} VND`}
+            {loading ? 'Đang tải...' : `${totalRevenue.toLocaleString()} VND`}
           </Typography>
         </Box>
       </CardContent>

@@ -23,10 +23,10 @@ const RevenueManagementPage: FC = () => {
               mb: 1,
             }}
           >
-            Revenue Management
+            Quản lý doanh thu
           </Typography>
           <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-            Track your business performance and revenue statistics
+            Theo dõi hiệu suất kinh doanh và thống kê doanh thu
           </Typography>
         </Box>
 

@@ -50,7 +50,7 @@ const validationSchema = Yup.object({
   type: Yup.string().required('Loại sân là bắt buộc'),
   pricePerHour: Yup.number().required('Giá theo giờ là bắt buộc').min(0, 'Giá phải là số dương'),
   status: Yup.string().required('Trạng thái là bắt buộc'),
-  description: Yup.string(),
+  images: Yup.array().of(Yup.string().url('Phải là một URL hợp lệ')),
 });
 
 export const FieldDialog: FC<FieldDialogProps> = ({ open, onClose, onSubmit, field }) => {
@@ -61,7 +61,7 @@ export const FieldDialog: FC<FieldDialogProps> = ({ open, onClose, onSubmit, fie
       type: field?.type || FieldType.ARTIFICIAL,
       pricePerHour: field?.pricePerHour || 0,
       status: field?.status || FieldStatus.AVAILABLE,
-      description: field?.description || '',
+      images: field?.images || [],
     },
     validationSchema,
     onSubmit: async (values) => {
@@ -196,14 +196,15 @@ export const FieldDialog: FC<FieldDialogProps> = ({ open, onClose, onSubmit, fie
 
             <TextField
               fullWidth
-              multiline
-              rows={3}
-              label="Mô tả (Tùy chọn)"
-              name="description"
-              value={formik.values.description}
-              onChange={formik.handleChange}
-              error={formik.touched.description && Boolean(formik.errors.description)}
-              helperText={formik.touched.description && formik.errors.description}
+              label="Hình ảnh (URL, cách nhau bằng dấu phẩy)"
+              name="images"
+              value={formik.values.images?.toString() || ''}
+              onChange={(e) =>
+                formik.setFieldValue(
+                  'images',
+                  e.target.value.split(',').map((url) => url.trim()),
+                )
+              }
             />
           </Box>
         </DialogContent>

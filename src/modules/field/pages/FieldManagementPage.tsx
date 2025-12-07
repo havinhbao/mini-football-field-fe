@@ -1,7 +1,7 @@
 import { createField, deleteField, fetchFields, updateField } from '@/api/field';
 import { useToast } from '@/hooks';
 import { Add } from '@mui/icons-material';
-import { Box, Button, CircularProgress, Container, Typography } from '@mui/material';
+import { Box, Button, CircularProgress, Typography } from '@mui/material';
 import { FC, useEffect, useState } from 'react';
 import { FieldCard } from '../components/FieldCard';
 import { FieldDialog } from '../components/FieldDialog';
@@ -20,7 +20,7 @@ const FieldManagementPage: FC = () => {
       const response = await fetchFields();
       setFields(response as Field[]);
     } catch (error) {
-      showToast('Failed to fetch fields', 'error');
+      showToast('Tải danh sách sân bóng thất bại', 'error');
     } finally {
       setLoading(false);
     }
@@ -33,7 +33,6 @@ const FieldManagementPage: FC = () => {
   const handleCreateField = async (values: Partial<Field>) => {
     try {
       if (selectedField?.id) {
-        // Update field - API call would go here
         await updateField(selectedField.id, values);
         showToast('Cập nhật sân bóng thành công', 'success');
       } else {
@@ -74,105 +73,102 @@ const FieldManagementPage: FC = () => {
   return (
     <Box
       sx={{
-        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
         background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+        flexGrow: 1,
+        px: 4,
         py: 4,
       }}
     >
-      <Container maxWidth="xl">
-        {/* Header */}
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            mb: 4,
-          }}
-        >
-          <Box>
-            <Typography
-              variant="h3"
-              sx={{
-                fontWeight: 700,
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                mb: 1,
-              }}
-            >
-              Quản lý Sân Bóng
-            </Typography>
-          </Box>
-
-          <Button
-            variant="contained"
-            startIcon={<Add />}
-            onClick={() => {
-              setSelectedField(undefined);
-              setDialogOpen(true);
-            }}
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 4,
+        }}
+      >
+        <Box>
+          <Typography
+            variant="h3"
             sx={{
-              borderRadius: 2,
-              px: 3,
+              fontWeight: 700,
               background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              '&:hover': {
-                background: 'linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%)',
-              },
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              mb: 1,
             }}
           >
-            Thêm Sân Mới
-          </Button>
+            Quản lý Sân Bóng
+          </Typography>
         </Box>
 
-        {/* Content */}
-        {loading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
-            <CircularProgress />
-          </Box>
-        ) : fields.length === 0 ? (
-          <Box
-            sx={{
-              textAlign: 'center',
-              py: 8,
-              backgroundColor: 'white',
-              borderRadius: 3,
-              boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-            }}
-          >
-            <Typography variant="h6" sx={{ color: 'text.secondary', mb: 2 }}>
-              Chưa có sân bóng nào được tạo. Vui lòng thêm sân mới.
-            </Typography>
-          </Box>
-        ) : (
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: {
-                xs: '1fr',
-                sm: 'repeat(2, 1fr)',
-                md: 'repeat(3, 1fr)',
-                lg: 'repeat(4, 1fr)',
-              },
-              gap: 3,
-            }}
-          >
-            {fields.map((field) => (
-              <FieldCard key={field.id} field={field} onEdit={handleEdit} onDelete={handleDelete} />
-            ))}
-          </Box>
-        )}
-
-        {/* Field Dialog */}
-        <FieldDialog
-          open={dialogOpen}
-          onClose={() => {
-            setDialogOpen(false);
+        <Button
+          variant="contained"
+          startIcon={<Add />}
+          onClick={() => {
             setSelectedField(undefined);
+            setDialogOpen(true);
           }}
-          onSubmit={handleCreateField}
-          field={selectedField}
-        />
-      </Container>
+          sx={{
+            borderRadius: 2,
+            px: 3,
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            '&:hover': {
+              background: 'linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%)',
+            },
+          }}
+        >
+          Thêm Sân Mới
+        </Button>
+      </Box>
+
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
+          <CircularProgress />
+        </Box>
+      ) : fields.length === 0 ? (
+        <Box
+          sx={{
+            textAlign: 'center',
+            py: 8,
+            backgroundColor: 'white',
+            borderRadius: 3,
+            boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+          }}
+        >
+          <Typography variant="h6" sx={{ color: 'text.secondary', mb: 2 }}>
+            Chưa có sân bóng nào được tạo. Vui lòng thêm sân mới.
+          </Typography>
+        </Box>
+      ) : (
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: '1fr',
+              sm: 'repeat(2, 1fr)',
+              md: 'repeat(3, 1fr)',
+              lg: 'repeat(4, 1fr)',
+            },
+            gap: 3,
+          }}
+        >
+          {fields.map((field) => (
+            <FieldCard key={field.id} field={field} onEdit={handleEdit} onDelete={handleDelete} />
+          ))}
+        </Box>
+      )}
+      <FieldDialog
+        open={dialogOpen}
+        onClose={() => {
+          setDialogOpen(false);
+          setSelectedField(undefined);
+        }}
+        onSubmit={handleCreateField}
+        field={selectedField}
+      />
     </Box>
   );
 };
