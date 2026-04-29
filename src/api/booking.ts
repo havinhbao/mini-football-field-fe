@@ -12,7 +12,17 @@ import {
   UpdateBookingDto,
 } from '@/types/api';
 
-export type { ExtraServiceDto, CreateBookingDto, UpdateBookingDto, PayBookingDto, ConfirmBookingDto, BookingFilterDto, BookingStatsDto, PaginatedBookingResultDto, BookingDto };
+export type {
+  ExtraServiceDto,
+  CreateBookingDto,
+  UpdateBookingDto,
+  PayBookingDto,
+  ConfirmBookingDto,
+  BookingFilterDto,
+  BookingStatsDto,
+  PaginatedBookingResultDto,
+  BookingDto,
+};
 
 export const createBooking = async (payload: CreateBookingDto) => {
   const response = await apiClient.post<ResponseObject<BookingDto>>('/bookings', payload);
@@ -48,6 +58,16 @@ export const getDailySchedule = async (fieldId: string, date: string) => {
   return response.data.payload;
 };
 
+export const getWeeklySchedule = async (fieldId: string, date: string) => {
+  const response = await apiClient.get<ResponseObject<Record<string, string[]>>>(
+    '/bookings/schedule/weekly',
+    {
+      params: { fieldId, date },
+    },
+  );
+  return response.data.payload;
+};
+
 export const getBookingStats = async (params: BookingFilterDto) => {
   const response = await apiClient.get<ResponseObject<BookingStatsDto>>(
     '/bookings/stats/overview',
@@ -69,7 +89,10 @@ export const updateBooking = async (id: string, payload: UpdateBookingDto) => {
 };
 
 export const confirmBooking = async (id: string, payload?: ConfirmBookingDto) => {
-  const response = await apiClient.put<ResponseObject<BookingDto>>(`/bookings/${id}/confirm`, payload);
+  const response = await apiClient.put<ResponseObject<BookingDto>>(
+    `/bookings/${id}/confirm`,
+    payload,
+  );
   return response.data.payload;
 };
 
