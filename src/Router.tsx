@@ -3,7 +3,7 @@ import { Navigate, Route, Routes } from 'react-router';
 import { RoutePaths, UserRole } from './constants';
 import { getUserRole, isAuthenticated } from './middlewares';
 import { LoginPage, RegisterPage } from './modules/auth';
-import { BookingManagementPage } from './modules/booking/pages';
+import { BookingManagementPage, PaymentResultPage } from './modules/booking/pages';
 import { BookFieldPage, MyBookingsPage, MyProfilePage, VNPayPaymentPage } from './modules/customer';
 import { DashboardPage, SettingsPage } from './modules/dashboard';
 import { FieldManagementPage, FieldPage } from './modules/field';
@@ -92,6 +92,14 @@ export const Router: FC = () => {
         }
       />
 
+      <Route
+        path={RoutePaths.VNPAY_PAYMENT_RESULT}
+        element={
+          <CustomerRoute>
+            <PaymentResultPage />
+          </CustomerRoute>
+        }
+      />
       <Route
         path={RoutePaths.BOOK_FIELD}
         element={

@@ -149,7 +149,9 @@ const BookFieldPage: FC = () => {
         fieldId: selectedFieldId,
         date: selectedDate.dateKey,
         startTime: slotLabel(selectedDate.startSlot),
-        endtime: slotLabel(selectedDate.endSlot + 1),
+        endTime: slotLabel(selectedDate.endSlot + 1),
+        amount:
+          (selectedField.pricePerHour * (selectedDate?.endSlot - selectedDate?.startSlot + 1)) / 2,
       };
       navigate(
         `${RoutePaths.VNPAY_PAYMENT}?data=${encodeURIComponent(JSON.stringify(bookingData))}`,

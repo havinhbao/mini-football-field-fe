@@ -25,8 +25,8 @@ export type {
 };
 
 export const createBooking = async (payload: CreateBookingDto) => {
-  const response = await apiClient.post<ResponseObject<BookingDto>>('/bookings', payload);
-  return response.data.payload;
+  const response = await apiClient.post<BookingDto>('/bookings', payload);
+  return response.data;
 };
 
 export const createBookingByAdmin = async (payload: CreateBookingDto) => {
@@ -112,4 +112,26 @@ export const cancelBooking = async (id: string, reason: string, refund: boolean)
 export const deleteBooking = async (id: string) => {
   const response = await apiClient.delete<ResponseObject<void>>(`/bookings/${id}`);
   return response.data.payload;
+};
+
+export const getPaymentURL = async (body: {
+  orderId: string;
+  amount: number;
+  orderInfo: string;
+}) => {
+  const data = await apiClient.post<
+    ResponseObject<{ paymentUrl: string } & Record<string, string>>
+  >('/vnpay/create-payment', body);
+  return data.data.payload;
+};
+
+export const handlePaymentReturn = async (body: {
+  orderId: string;
+  amount: number;
+  orderInfo: string;
+}) => {
+  const data = await apiClient.post<
+    ResponseObject<{ paymentUrl: string } & Record<string, string>>
+  >('/vnpay/create-payment', body);
+  return data.data.payload;
 };

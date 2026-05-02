@@ -9,6 +9,7 @@ export const RoutePaths = {
   MY_PROFILE: '/my-profile',
   BOOK_FIELD: '/book',
   VNPAY_PAYMENT: '/payment/vnpay',
+  VNPAY_PAYMENT_RESULT: '/payment-result',
   DASHBOARD_SUBPATHS: {
     BOOKINGS: 'bookings',
     FIELDS: 'fields',

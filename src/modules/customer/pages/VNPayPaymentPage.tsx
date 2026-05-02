@@ -1,4 +1,4 @@
-import { createBooking } from '@/api/booking';
+import { createBooking, getPaymentURL, payment } from '@/api/booking';
 import { useToast } from '@/hooks';
 import { RoutePaths } from '@/constants/routes';
 import { CheckCircle, CreditCard, QrCode2, Schedule } from '@mui/icons-material';
@@ -20,12 +20,14 @@ import { format } from 'date-fns';
 import { FC, useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { CustomerNavBar } from '../components/CustomerNavBar';
+import { buildPriceString } from '@/utils';
 
 interface BookingData {
   fieldId: string;
   date: string;
   startTime: string;
   endTime: string;
+  amount: number;
 }
 
 const VNPayPaymentPage: FC = () => {
@@ -43,6 +45,7 @@ const VNPayPaymentPage: FC = () => {
     if (dataParam) {
       try {
         const decoded = JSON.parse(decodeURIComponent(dataParam));
+        console.log(decoded);
         setBookingData(decoded);
       } catch (error) {
         showToast('Invalid booking data', 'error');
@@ -53,19 +56,38 @@ const VNPayPaymentPage: FC = () => {
     }
   }, [searchParams]);
 
-  const handleGenerateQR = () => {
-    setShowQR(true);
-    setProcessing(true);
-    
-    // Simulate QR code generation and payment waiting
-    // In reality, this would:
-    // 1. Call VNPay API to create payment
-    // 2. Get QR code data or payment URL
-    // 3. Poll for payment status or wait for webhook
-    
-    setTimeout(() => {
-      setProcessing(false);
-    }, 1000);
+  // useEffect(() => {
+  //   const fetchURL = async () => {
+  //     if (!bookingData) return;
+  //     const data = await getPaymentURL({
+  //       orderInfo: `"dat_san_tu_${bookingData.startTime}_den_${bookingData.endTime}"`,
+  //       amount: bookingData.amount,
+  //       orderId: bookingData.amount,
+  //     });
+  //     setUrlVnpay(data.paymentUrl);
+  //   };
+  //   fetchURL();
+  // }, []);
+
+  const handleGenerateQR = async () => {
+    // create booking
+    if (!bookingData) return;
+    const bookingRes = await createBooking({
+      fieldId: bookingData.fieldId,
+      date: bookingData.date,
+      startTime: bookingData.startTime,
+      endTime: bookingData.endTime,
+    });
+
+    console.log(bookingRes);
+    // create url
+    const data = await getPaymentURL({
+      orderInfo: `"dat_san_tu_${bookingData.startTime}_den_${bookingData.endTime}"`,
+      amount: bookingRes.totalPrice,
+      orderId: bookingRes.id,
+    });
+
+    window.location.href = data.paymentUrl;
   };
 
   const handlePayment = async () => {
@@ -93,7 +115,15 @@ const VNPayPaymentPage: FC = () => {
 
   if (!bookingData) {
     return (
-      <Box sx={{ bgcolor: '#f5f7fa', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
+      <Box
+        sx={{
+          bgcolor: '#f5f7fa',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '100vh',
+        }}
+      >
         <CircularProgress />
       </Box>
     );
@@ -174,10 +204,12 @@ const VNPayPaymentPage: FC = () => {
 
                   <Divider sx={{ my: 2 }} />
 
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Box
+                    sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                  >
                     <Typography variant="h6">Total Amount:</Typography>
                     <Typography variant="h5" color="primary" sx={{ fontWeight: 700 }}>
-                      200,000 VND
+                      {buildPriceString(bookingData.amount)}
                     </Typography>
                   </Box>
                 </CardContent>
@@ -258,7 +290,7 @@ const VNPayPaymentPage: FC = () => {
                       >
                         {processing ? 'Processing Payment...' : 'I Have Completed Payment'}
                       </Button>
-                      
+
                       <Button
                         variant="text"
                         fullWidth
@@ -306,31 +338,7 @@ const VNPayPaymentPage: FC = () => {
                           <QrCode2 sx={{ fontSize: 40 }} />
                           <Box>
                             <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                              QR Code Payment (VietQR)
-                            </Typography>
-                            <Typography variant="body2" sx={{ opacity: 0.9 }}>
-                              Scan and pay with any banking app
-                            </Typography>
-                          </Box>
-                        </Box>
-                      </Box>
-
-                      <Box
-                        sx={{
-                          bgcolor: 'rgba(255,255,255,0.05)',
-                          p: 3,
-                          borderRadius: 2,
-                          opacity: 0.6,
-                        }}
-                      >
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                          <CreditCard sx={{ fontSize: 40 }} />
-                          <Box>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                              ATM/Credit Card
-                            </Typography>
-                            <Typography variant="body2" sx={{ opacity: 0.9 }}>
-                              Coming soon
+                              Nhấn vào đây để thanh toán với vnpay
                             </Typography>
                           </Box>
                         </Box>
@@ -366,5 +374,3 @@ const VNPayPaymentPage: FC = () => {
 };
 
 export default VNPayPaymentPage;
-
-
