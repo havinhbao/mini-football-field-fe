@@ -36,14 +36,9 @@ const fmtDate = (d: string) =>
 
 export default function PaymentResultPage() {
   const navigate = useNavigate();
-  const searchParams = {
-    status: 'success',
-    orderId: '1777733564162',
-    amount: '100000',
-    transactionNo: '15519782',
-  };
-  const orderId = searchParams['orderId'] ?? '';
-  const amountRaw = searchParams['amount'];
+  const [searchParams] = useSearchParams();
+  const orderId = searchParams.get('orderId') ?? '';
+  const amountRaw = searchParams.get('amount');
 
   const [booking, setBooking] = useState<BookingDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -156,29 +151,6 @@ export default function PaymentResultPage() {
 
               {!loading && !error && (
                 <Paper variant="outlined" sx={{ borderRadius: 2, overflow: 'hidden' }}>
-                  {rows.map((row, i) => (
-                    <Box
-                      key={row.label}
-                      display="flex"
-                      justifyContent="space-between"
-                      alignItems="center"
-                      px={1.75}
-                      py={1.25}
-                      borderBottom={i < rows.length - 1 ? '1px solid' : 'none'}
-                      borderColor="divider"
-                    >
-                      <Typography fontSize={13} color="text.secondary">
-                        {row.label}
-                      </Typography>
-                      <Typography
-                        fontSize={13}
-                        fontWeight={500}
-                        fontFamily={row.label === 'Mã đơn' ? 'monospace' : undefined}
-                      >
-                        {row.value}
-                      </Typography>
-                    </Box>
-                  ))}
                   <Divider />
                   <Box
                     display="flex"
